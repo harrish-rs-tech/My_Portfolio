@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Harrish R S — AI &amp; Data Science Portfolio</title>
+  <meta name="description" content="Portfolio of Harrish R S, B.Tech Artificial Intelligence and Data Science student at V.S.B. Engineering College, Karur. Open to internships and placements." />
+  <meta name="keywords" content="Harrish R S, AI, Data Science, B.Tech, Portfolio, VSB Engineering College, Karur, Machine Learning, Python, Java" />
+  <meta name="author" content="Harrish R S" />
+  <meta property="og:title" content="Harrish R S — AI &amp; Data Science Portfolio" />
+  <meta property="og:description" content="B.Tech Artificial Intelligence and Data Science student at V.S.B. Engineering College, Karur — open to internships." />
+  <meta property="og:type" content="website" />
+  <!-- Honeypot spam protection field (hidden from users) -->
+  <style>.hp-field{display:none!important;position:absolute;left:-9999px}</style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- EmailJS SDK — loaded async; key configured in script.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     AUTH OVERLAY (Dashboard only)
+════════════════════════════════════════════════ -->
+<div id="auth-overlay" class="auth-overlay hidden" role="dialog" aria-modal="true" aria-label="Dashboard authentication">
+  <div class="auth-card">
+    <div class="auth-logo">🔐</div>
+    <h2>Activity Dashboard</h2>
+    <p>This section is private. Enter your password to continue.</p>
+    <div class="form-group">
+      <label class="form-label" for="auth-password">Password</label>
+      <input type="password" id="auth-password" class="form-input" placeholder="Enter password…" autocomplete="current-password" />
+    </div>
+    <button class="btn btn-primary" style="width:100%" onclick="handleAuth()" id="auth-submit-btn">Unlock Dashboard</button>
+    <div id="auth-error" class="auth-error" role="alert" aria-live="polite"></div>
+    <button class="btn btn-ghost btn-sm" style="margin-top:16px;width:100%" onclick="cancelAuth()">← Go Back</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     TASK MODAL
+════════════════════════════════════════════════ -->
+<div id="task-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Task</h3>
+      <button class="modal-close" onclick="closeModal('task-modal')" aria-label="Close modal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="task-title-input">Title *</label>
+      <input type="text" id="task-title-input" class="form-input" placeholder="e.g. Complete ML project" maxlength="120" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="task-desc-input">Description</label>
+      <textarea id="task-desc-input" class="form-input form-textarea" placeholder="Optional details…" rows="3" style="min-height:80px"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="task-cat-input">Category</label>
+        <select id="task-cat-input" class="form-input form-select">
+          <option value="Learning">📚 Learning</option>
+          <option value="Projects">🚀 Projects</option>
+          <option value="Applications">📋 Applications</option>
+          <option value="Personal">💡 Personal</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="task-due-input">Due Date</label>
+        <input type="date" id="task-due-input" class="form-input" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('task-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PROJECT MODAL
+════════════════════════════════════════════════ -->
+<div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="proj-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="proj-modal-title">Add Project</h3>
+      <button class="modal-close" onclick="closeModal('project-modal')" aria-label="Close modal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="proj-title-input">Project Title *</label>
+      <input type="text" id="proj-title-input" class="form-input" placeholder="e.g. Sentiment Analysis Dashboard" maxlength="100" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="proj-desc-input">Description *</label>
+      <textarea id="proj-desc-input" class="form-input form-textarea" placeholder="What does this project do? What problem does it solve?" rows="4" style="min-height:100px"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="proj-tech-input">Technologies (comma-separated)</label>
+      <input type="text" id="proj-tech-input" class="form-input" placeholder="Python, TensorFlow, Flask" />
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="proj-demo-input">Live Demo URL</label>
+        <input type="url" id="proj-demo-input" class="form-input" placeholder="https://…" />
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="proj-code-input">GitHub / Source Code URL</label>
+        <input type="url" id="proj-code-input" class="form-input" placeholder="https://github.com/…" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="proj-emoji-input">Project Icon (emoji)</label>
+      <input type="text" id="proj-emoji-input" class="form-input" placeholder="🤖" maxlength="4" style="width:80px" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('project-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveProject()">Save Project</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     ACHIEVEMENT / CERTIFICATION MODAL
+════════════════════════════════════════════════ -->
+<div id="achievement-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="ach-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="ach-modal-title">Add Certificate / Achievement</h3>
+      <button class="modal-close" onclick="closeModal('achievement-modal')" aria-label="Close modal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ach-title-input">Title *</label>
+      <input type="text" id="ach-title-input" class="form-input" placeholder="e.g. Data Science and AI – 8-Week Certification Course" maxlength="160" />
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="ach-issuer-input">Issuer / Organisation</label>
+        <input type="text" id="ach-issuer-input" class="form-input" placeholder="IIT Madras, Coursera, NPTEL…" />
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="ach-date-input">Completion Month &amp; Year</label>
+        <input type="month" id="ach-date-input" class="form-input" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ach-desc-input">Description</label>
+      <textarea id="ach-desc-input" class="form-input form-textarea" placeholder="What did you learn or achieve? Any notable details." rows="3" style="min-height:80px"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ach-link-input">Credential / Certificate Link (URL)</label>
+      <input type="url" id="ach-link-input" class="form-input" placeholder="https://…" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ach-img-input">Upload Certificate Image (JPG/PNG/PDF preview)</label>
+      <input type="file" id="ach-img-input" class="form-input" accept="image/*,.pdf" style="padding:8px" />
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px">Max 3MB. Image stored in your browser. For permanent hosting, upload to a cloud service and paste the URL above.</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="ach-emoji-input">Icon (emoji)</label>
+      <input type="text" id="ach-emoji-input" class="form-input" placeholder="🏆" maxlength="4" style="width:80px" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('achievement-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveAchievement()">Save Certificate</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     SKILL MODAL (add/edit individual skill)
+════════════════════════════════════════════════ -->
+<div id="skill-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="skill-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="skill-modal-title">Add Skill</h3>
+      <button class="modal-close" onclick="closeModal('skill-modal')" aria-label="Close modal">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="skill-name-input">Skill Name *</label>
+      <input type="text" id="skill-name-input" class="form-input" placeholder="e.g. Python" maxlength="60" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="skill-cat-input">Category *</label>
+      <select id="skill-cat-input" class="form-input form-select">
+        <option value="Programming Languages">💻 Programming Languages</option>
+        <option value="Technical Skills">🔧 Technical Skills</option>
+        <option value="Data Analytics">📊 Data Analytics</option>
+        <option value="Tools &amp; Platforms">🛠️ Tools &amp; Platforms</option>
+        <option value="Soft Skills">🌟 Soft Skills</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('skill-modal')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSkill()">Save Skill</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     CERTIFICATE PREVIEW MODAL
+════════════════════════════════════════════════ -->
+<div id="cert-preview-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cert-preview-title">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <h3 id="cert-preview-title">Certificate Preview</h3>
+      <button class="modal-close" onclick="closeModal('cert-preview-modal')" aria-label="Close preview">✕</button>
+    </div>
+    <div id="cert-preview-content" style="text-align:center;padding:8px 0">
+      <img id="cert-preview-img" src="" alt="Certificate" style="max-width:100%;max-height:500px;border-radius:8px;border:1px solid var(--border)" />
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════ -->
+<nav id="main-nav" role="navigation" aria-label="Main navigation">
+  <div class="container nav-inner">
+    <a href="#hero" class="nav-logo" aria-label="Harrish R S Home"><span>H</span>arrish R S</a>
+    <div class="nav-links" role="menubar">
+      <a href="#hero" class="nav-link active" role="menuitem">Home</a>
+      <a href="#about" class="nav-link" role="menuitem">About</a>
+      <a href="#projects" class="nav-link" role="menuitem">Projects</a>
+      <a href="#skills" class="nav-link" role="menuitem">Skills</a>
+      <a href="#resume" class="nav-link" role="menuitem">Resume</a>
+      <a href="#achievements" class="nav-link" role="menuitem">Certifications</a>
+      <a href="#contact" class="nav-link" role="menuitem">Contact</a>
+      <button class="nav-link" onclick="showDashboardAuth()" id="dash-nav-btn" title="Private Dashboard">⚡ Dashboard</button>
+    </div>
+    <div class="nav-cta">
+      <a href="#contact" class="btn btn-primary btn-sm">Hire Me</a>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false" id="hamburger-btn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div id="mobile-nav" class="nav-mobile" role="navigation" aria-label="Mobile navigation">
+  <a href="#hero" class="nav-link" onclick="closeMobileNav()">Home</a>
+  <a href="#about" class="nav-link" onclick="closeMobileNav()">About</a>
+  <a href="#projects" class="nav-link" onclick="closeMobileNav()">Projects</a>
+  <a href="#skills" class="nav-link" onclick="closeMobileNav()">Skills</a>
+  <a href="#resume" class="nav-link" onclick="closeMobileNav()">Resume</a>
+  <a href="#achievements" class="nav-link" onclick="closeMobileNav()">Certifications</a>
+  <a href="#contact" class="nav-link" onclick="closeMobileNav()">Contact</a>
+  <button class="nav-link" onclick="closeMobileNav(); showDashboardAuth();">⚡ Dashboard</button>
+  <a href="#contact" class="btn btn-primary" style="margin-top:8px;text-align:center">Hire Me</a>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<section id="hero" aria-label="Introduction">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="hero-availability">
+          <span class="badge badge-teal" id="availability-badge">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            Open to Internships
+          </span>
+        </div>
+        <p class="hero-greeting">Hello, I'm</p>
+        <h1 class="hero-name" id="hero-name">Harrish R S</h1>
+        <p class="hero-title" id="hero-title">B.Tech Artificial Intelligence and Data Science Student</p>
+        <p class="hero-bio" id="hero-bio">
+          Passionate about building intelligent systems and data-driven solutions.
+          Studying at <strong style="color:var(--text-primary)">V.S.B. Engineering College, Karur</strong>,
+          with a focus on machine learning, Python programming, Java, and data analytics.
+          Actively seeking internships to apply academic knowledge to impactful real-world problems.
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">🚀 View Projects</a>
+          <button class="btn btn-outline" onclick="downloadResume()">📄 Download Resume</button>
+          <a href="#contact" class="btn btn-ghost">✉️ Contact Me</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-value" id="stat-projects">0</div>
+            <div class="stat-label">Projects</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="stat-certs">0</div>
+            <div class="stat-label">Certifications</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">2029</div>
+            <div class="stat-label">Grad Year</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-wrap" aria-hidden="true">
+        <div class="hero-image-ring">
+          <div class="hero-image-inner">
+            <img src="profile.jpg" alt="Harrish R S profile photo" id="profile-img" />
+          </div>
+        </div>
+        <div class="hero-float f1">🤖 AI &amp; ML</div>
+        <div class="hero-float f2">📊 Data Analytics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     ABOUT
+════════════════════════════════════════════════ -->
+<section id="about" class="section" aria-label="About me">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">About Me</div>
+      <h2 class="section-title">Who I Am</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-bio" data-reveal>
+        <h3 style="margin-bottom:16px">My Story &amp; Vision</h3>
+        <p>
+          I'm <strong style="color:var(--text-primary)">Harrish R S</strong>, a B.Tech student specialising in
+          <strong style="color:var(--teal-400)">Artificial Intelligence and Data Science</strong> at
+          V.S.B. Engineering College, Karur. I'm driven by curiosity and a belief that AI can solve meaningful real-world problems.
+        </p>
+        <p>
+          My academic focus spans machine learning, Python and Java programming, statistical analysis, and data analytics.
+          I enjoy applying these skills to practical projects and am actively seeking internship opportunities
+          to contribute, learn, and grow in a professional environment.
+        </p>
+        <p>
+          I am a disciplined team player who values clear thinking and collaborative problem-solving.
+          My goal is to build a career at the intersection of artificial intelligence and data-driven decision-making.
+        </p>
+        <p style="margin-top:24px">
+          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="btn btn-outline btn-sm">🎓 View Talentely Profile</a>
+        </p>
+      </div>
+      <div class="about-highlights" data-reveal>
+        <div class="highlight-card">
+          <div class="highlight-icon">🎓</div>
+          <div class="highlight-info">
+            <h4>Degree</h4>
+            <p>B.Tech – Artificial Intelligence and Data Science</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🏫</div>
+          <div class="highlight-info">
+            <h4>College</h4>
+            <p>V.S.B. Engineering College, Karur</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">📍</div>
+          <div class="highlight-info">
+            <h4>Location</h4>
+            <p>Karur, Tamil Nadu, India</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">📅</div>
+          <div class="highlight-info">
+            <h4>Expected Graduation</h4>
+            <p>2029</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🎯</div>
+          <div class="highlight-info">
+            <h4>Areas of Interest</h4>
+            <p>Machine Learning · Python Programming · Java Programming · Data Analytics</p>
+          </div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🌐</div>
+          <div class="highlight-info">
+            <h4>Languages</h4>
+            <p>Tamil (Native) · English (Proficient)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     PROJECTS
+════════════════════════════════════════════════ -->
+<section id="projects" class="section" aria-label="Projects">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">My Work</div>
+      <h2 class="section-title">Featured Projects</h2>
+      <p class="section-desc">Projects I have built during my studies. Click "Add Project" (after unlocking the dashboard) to add your real projects.</p>
+      <div class="divider" style="margin-top:20px"></div>
+    </div>
+    <div style="text-align:right;margin-bottom:20px">
+      <button class="btn btn-outline btn-sm admin-only" onclick="openAddProject()">+ Add Project</button>
+    </div>
+    <div id="projects-grid" class="grid-auto" data-reveal></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SKILLS
+════════════════════════════════════════════════ -->
+<section id="skills" class="section" aria-label="Skills">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">Expertise</div>
+      <h2 class="section-title">Skills &amp; Technologies</h2>
+      <p class="section-desc">Technologies and tools I work with, organised by category. Unlock the dashboard to add or remove skills.</p>
+      <div class="divider" style="margin-top:20px"></div>
+    </div>
+    <div style="text-align:right;margin-bottom:20px">
+      <button class="btn btn-outline btn-sm admin-only" onclick="openAddSkill()">+ Add Skill</button>
+    </div>
+    <div id="skills-wrapper" class="skills-wrapper" data-reveal></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     RESUME
+════════════════════════════════════════════════ -->
+<section id="resume" class="section" aria-label="Resume">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">Resume</div>
+      <h2 class="section-title">My Resume</h2>
+      <p class="section-desc">Download my latest resume or browse my education and experience timeline below.</p>
+      <div class="divider" style="margin-top:20px"></div>
+    </div>
+    <div class="resume-grid">
+      <!-- Resume upload / download -->
+      <div class="resume-card" data-reveal>
+        <h3 style="margin-bottom:8px">📄 Resume File</h3>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px">
+          Upload your PDF resume here. It is stored securely in your browser (localStorage).
+          <strong style="color:#fdba74">For public download across all devices:</strong> place <code>resume.pdf</code> in the same folder as <code>index.html</code>.
+        </p>
+        <div id="resume-drop-zone" class="resume-upload-zone"
+          onclick="document.getElementById('resume-file-input').click()"
+          ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleResumeDrop(event)"
+          role="button" tabindex="0" aria-label="Upload resume PDF"
+          onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('resume-file-input').click()">
+          <div class="upload-icon">☁️</div>
+          <div class="upload-text">Click to upload or drag &amp; drop</div>
+          <div class="upload-subtext">PDF only — max 5 MB</div>
+        </div>
+        <input type="file" id="resume-file-input" accept=".pdf" style="display:none" onchange="handleResumeUpload(event)" aria-label="Resume file input" />
+        <div id="resume-file-info" class="resume-file-info">
+          <span>📑</span>
+          <span class="resume-file-name" id="resume-file-name">resume.pdf</span>
+          <button class="btn btn-ghost btn-sm" onclick="removeResume()">Remove</button>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="downloadResume()" id="download-resume-btn">⬇️ Download Resume</button>
+        <p id="resume-note" style="font-size:0.75rem;color:var(--text-muted);margin-top:12px;line-height:1.5">
+          No resume uploaded yet. Upload above, or place <code>resume.pdf</code> in the project folder for public access.
+        </p>
+      </div>
+
+      <!-- Timeline -->
+      <div data-reveal>
+        <h3 style="margin-bottom:28px">Education &amp; Experience</h3>
+        <div class="timeline" id="resume-timeline">
+
+          <!-- B.Tech -->
+          <div class="timeline-item">
+            <div class="timeline-date">2025 – Present</div>
+            <div class="timeline-title">B.Tech – Artificial Intelligence and Data Science</div>
+            <div class="timeline-sub">V.S.B. Engineering College, Karur · Expected Graduation: 2029</div>
+            <div class="timeline-desc">Pursuing undergraduate degree with focus on machine learning, Python and Java programming, data analytics, and AI fundamentals.</div>
+          </div>
+
+          <!-- Pega Internship — leave dates/location blank as not provided -->
+          <div class="timeline-item">
+            <div class="timeline-date" id="pega-date">[Start Date] – [End Date]</div>
+            <div class="timeline-title">Pega Internship</div>
+            <div class="timeline-sub" id="pega-org">Pega Systems · [Location — add when available]</div>
+            <div class="timeline-desc" id="pega-desc">[Add your internship responsibilities, role, and key learnings here. Edit this entry directly in index.html or via the dashboard timeline editor.]</div>
+          </div>
+
+          <!-- School -->
+          <div class="timeline-item">
+            <div class="timeline-date">2025</div>
+            <div class="timeline-title">Higher Secondary Education (12th Standard)</div>
+            <div class="timeline-sub">Little Flower Matriculation Higher Secondary School, Karur</div>
+            <div class="timeline-desc" id="school-desc">[Specialisation, percentage/marks, and relevant achievements — add your actual results here.]</div>
+          </div>
+
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:12px">
+          ✏️ To update timeline entries, edit the blocks inside <code>#resume-timeline</code> in <code>index.html</code>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     ACHIEVEMENTS & CERTIFICATIONS
+════════════════════════════════════════════════ -->
+<section id="achievements" class="section" aria-label="Achievements and Certifications">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">Recognition</div>
+      <h2 class="section-title">Certifications &amp; Achievements</h2>
+      <p class="section-desc">Certifications earned and milestones reached — latest first. Unlock the dashboard to add more certificates.</p>
+      <div class="divider" style="margin-top:20px"></div>
+    </div>
+    <div style="text-align:right;margin-bottom:20px">
+      <button class="btn btn-outline btn-sm admin-only" onclick="openAddAchievement()">+ Add Certificate</button>
+    </div>
+    <div id="achievements-grid" class="grid-2" data-reveal></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     ACTIVITY DASHBOARD (Private)
+════════════════════════════════════════════════ -->
+<section id="dashboard" class="section" aria-label="Activity Dashboard">
+  <div class="container">
+    <div class="dash-header">
+      <div>
+        <div class="section-label" style="text-align:left;justify-content:flex-start">Private</div>
+        <h2>⚡ Activity &amp; Content Management Dashboard</h2>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-top:4px">
+          Manage your tasks, update profile bio, education timeline, skills, projects, certificates, and export full site backups.
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="exportSiteData()" title="Export all website data to JSON">⬇️ Export Site Data</button>
+        <button class="btn btn-ghost btn-sm" onclick="lockDashboard()">🔒 Lock</button>
+      </div>
+    </div>
+
+    <!-- Dashboard Tabs Navigation -->
+    <div class="dash-tabs-nav" role="tablist">
+      <button class="dash-tab-btn active" role="tab" aria-selected="true" id="tab-btn-tasks" onclick="switchDashTab('tasks')">📋 Tasks</button>
+      <button class="dash-tab-btn" role="tab" aria-selected="false" id="tab-btn-profile" onclick="switchDashTab('profile')">👤 Profile &amp; Bio</button>
+      <button class="dash-tab-btn" role="tab" aria-selected="false" id="tab-btn-timeline" onclick="switchDashTab('timeline')">🎓 Education &amp; Internship</button>
+      <button class="dash-tab-btn" role="tab" aria-selected="false" id="tab-btn-content" onclick="switchDashTab('content')">🚀 Projects &amp; Skills</button>
+      <button class="dash-tab-btn" role="tab" aria-selected="false" id="tab-btn-certs" onclick="switchDashTab('certs')">🏆 Certifications &amp; Resume</button>
+      <button class="dash-tab-btn" role="tab" aria-selected="false" id="tab-btn-backup" onclick="switchDashTab('backup')">💾 Backup &amp; Email</button>
+    </div>
+
+    <!-- ── TAB 1: TASKS ── -->
+    <div id="tab-panel-tasks" class="dash-tab-panel active" role="tabpanel">
+      <div class="dash-stats" id="dash-stats-grid">
+        <div class="dash-stat-card"><div class="stat-n" id="dash-total">0</div><div class="stat-l">Total Tasks</div></div>
+        <div class="dash-stat-card"><div class="stat-n" id="dash-done">0</div><div class="stat-l">Completed</div></div>
+        <div class="dash-stat-card"><div class="stat-n" id="dash-active">0</div><div class="stat-l">Active</div></div>
+        <div class="dash-stat-card" style="padding-bottom:16px">
+          <div class="stat-n" id="dash-pct">0%</div>
+          <div class="stat-l">Completion</div>
+          <div class="progress-bar-wrap" style="margin-top:8px"><div class="progress-bar-fill" id="dash-progress-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="dash-toolbar">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('active', this)">Active</button>
+        <button class="filter-btn" onclick="setFilter('completed', this)">Completed</button>
+        <div style="width:1px;height:24px;background:var(--border);margin:0 4px"></div>
+        <button class="filter-btn" onclick="setFilter('Learning', this)">📚 Learning</button>
+        <button class="filter-btn" onclick="setFilter('Projects', this)">🚀 Projects</button>
+        <button class="filter-btn" onclick="setFilter('Applications', this)">📋 Applications</button>
+        <button class="filter-btn" onclick="setFilter('Personal', this)">💡 Personal</button>
+        <div style="margin-left:auto">
+          <button class="btn btn-primary btn-sm" onclick="openModal('task-modal')">+ Add Task</button>
+        </div>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </div>
+
+    <!-- ── TAB 2: PROFILE & BIO ── -->
+    <div id="tab-panel-profile" class="dash-tab-panel" role="tabpanel">
+      <div class="dash-card">
+        <h3>Edit Personal &amp; Academic Profile</h3>
+        <p>Update your headline, bio, college, graduation year, and areas of interest. Changes update instantly across your portfolio and save in browser storage.</p>
+        <form onsubmit="saveProfileSettings(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-name">Full Name</label>
+              <input type="text" id="dash-prof-name" class="form-input" value="Harrish R S" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-title">Professional Title</label>
+              <input type="text" id="dash-prof-title" class="form-input" value="B.Tech Artificial Intelligence and Data Science Student" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-college">College / Institution</label>
+              <input type="text" id="dash-prof-college" class="form-input" value="V.S.B. Engineering College, Karur" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-grad">Graduation Year</label>
+              <input type="text" id="dash-prof-grad" class="form-input" value="2029" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dash-prof-interests">Areas of Interest</label>
+            <input type="text" id="dash-prof-interests" class="form-input" value="Machine Learning, Python Programming, Java Programming, and Data Analytics" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dash-prof-bio">Hero Bio Description</label>
+            <textarea id="dash-prof-bio" class="form-input form-textarea" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-email">Email Address</label>
+              <input type="email" id="dash-prof-email" class="form-input" value="697harrish@gmail.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-location">Location</label>
+              <input type="text" id="dash-prof-location" class="form-input" value="Karur, Tamil Nadu, India" />
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">💾 Save Profile Details</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── TAB 3: EDUCATION & INTERNSHIP ── -->
+    <div id="tab-panel-timeline" class="dash-tab-panel" role="tabpanel">
+      <div class="dash-grid-2">
+        <!-- Pega Internship Card -->
+        <div class="dash-card">
+          <h3>💼 Pega Internship</h3>
+          <p>Update your Pega internship entry. Unknown dates and locations can be left blank until confirmed.</p>
+          <form onsubmit="savePegaTimeline(event)">
+            <div class="form-group">
+              <label class="form-label" for="pega-in-title">Internship Title</label>
+              <input type="text" id="pega-in-title" class="form-input" value="Pega Internship" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pega-in-org">Organization</label>
+              <input type="text" id="pega-in-org" class="form-input" value="Pega Systems" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="pega-in-start">Start Date (leave blank if unknown)</label>
+                <input type="text" id="pega-in-start" class="form-input" placeholder="e.g. June 2026 or blank" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="pega-in-end">End Date (leave blank if unknown)</label>
+                <input type="text" id="pega-in-end" class="form-input" placeholder="e.g. August 2026 or Present" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pega-in-loc">Location (leave blank if unknown)</label>
+              <input type="text" id="pega-in-loc" class="form-input" placeholder="e.g. Remote or Hyderabad" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pega-in-desc">Responsibilities / Learnings</label>
+              <textarea id="pega-in-desc" class="form-input form-textarea" rows="3" placeholder="Key responsibilities and contributions…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pega-in-cert">Certificate Link (URL)</label>
+              <input type="url" id="pega-in-cert" class="form-input" placeholder="https://…" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">💾 Save Internship Details</button>
+          </form>
+        </div>
+
+        <!-- School Education Card -->
+        <div class="dash-card">
+          <h3>🏫 School Education</h3>
+          <p>Little Flower Matriculation Higher Secondary School, Karur (2025). Leave blank until you have actual results.</p>
+          <form onsubmit="saveSchoolTimeline(event)">
+            <div class="form-group">
+              <label class="form-label" for="school-in-name">School Name</label>
+              <input type="text" id="school-in-name" class="form-input" value="Little Flower Matriculation Higher Secondary School, Karur" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="school-in-year">Year</label>
+                <input type="text" id="school-in-year" class="form-input" value="2025" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="school-in-spec">Specialization / Stream</label>
+                <input type="text" id="school-in-spec" class="form-input" placeholder="e.g. Computer Science / Maths" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="school-in-marks">Percentage / Marks</label>
+              <input type="text" id="school-in-marks" class="form-input" placeholder="e.g. 92% or leave blank" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="school-in-ach">Relevant Achievements</label>
+              <textarea id="school-in-ach" class="form-input form-textarea" rows="3" placeholder="Awards, honors, competitions…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">💾 Save School Details</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 4: PROJECTS & SKILLS ── -->
+    <div id="tab-panel-content" class="dash-tab-panel" role="tabpanel">
+      <div class="dash-grid-2">
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3>🚀 Projects Management</h3>
+            <button class="btn btn-primary btn-sm" onclick="openAddProject()">+ Add Project</button>
+          </div>
+          <p>Add genuine projects. All added projects appear in the Featured Projects section.</p>
+          <div id="dash-projects-list" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3>🔧 Skills Management</h3>
+            <button class="btn btn-primary btn-sm" onclick="openAddSkill()">+ Add Skill</button>
+          </div>
+          <p>Manage individual skills under Programming Languages, Technical Skills, Data Analytics, and Tools &amp; Platforms.</p>
+          <div id="dash-skills-list" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 5: CERTIFICATES & RESUME ── -->
+    <div id="tab-panel-certs" class="dash-tab-panel" role="tabpanel">
+      <div class="dash-grid-2">
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3>🏆 Certifications</h3>
+            <button class="btn btn-primary btn-sm" onclick="openAddAchievement()">+ Add Certificate</button>
+          </div>
+          <p>Includes your 8-Week IIT Madras CODE / School Connect Certificate. Upload more certificates individually without overwriting.</p>
+          <div id="dash-certs-list" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+        <div class="dash-card">
+          <h3>📄 Resume Management</h3>
+          <p>Upload a new PDF resume or download your current uploaded version.</p>
+          <div style="margin-bottom:16px">
+            <input type="file" id="dash-resume-input" accept=".pdf" class="form-input" style="padding:8px" onchange="handleResumeUpload(event)" />
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px">Max 5MB PDF. Saved in browser storage.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="downloadResume()">⬇️ Test Resume Download</button>
+            <button class="btn btn-ghost btn-sm" onclick="removeResume()" style="color:#f87171">Remove Resume</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 6: BACKUP & EMAIL ── -->
+    <div id="tab-panel-backup" class="dash-tab-panel" role="tabpanel">
+      <div class="dash-grid-2">
+        <div class="dash-card">
+          <h3>💾 Complete Site Backup &amp; Transfer</h3>
+          <p>Export all profile info, timeline, skills, projects, certificates, and tasks to a single JSON backup. You can import this backup on any device or computer.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+            <button class="btn btn-primary btn-sm" onclick="exportSiteData()">⬇️ Export Complete Site Data</button>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;margin:0">
+              ⬆️ Import Site Data
+              <input type="file" accept=".json" style="display:none" onchange="importSiteData(event)" />
+            </label>
+          </div>
+          <p style="font-size:0.75rem;color:#fdba74">
+            💡 <strong>Permanent Hosting Tip:</strong> When publishing to GitHub Pages, Netlify, or Vercel, copy the exported JSON into <code>DEFAULT_DATA</code> in <code>script.js</code> so your changes are visible to every visitor by default without requiring localStorage.
+          </p>
+        </div>
+
+        <div class="dash-card">
+          <h3>✉️ Email Delivery Settings</h3>
+          <p>Messages submitted through the contact form are sent to <strong>697harrish@gmail.com</strong>.</p>
+          <form onsubmit="saveEmailSettings(event)">
+            <div class="form-group">
+              <label class="form-label" for="cfg-emailjs-public">EmailJS Public Key</label>
+              <input type="text" id="cfg-emailjs-public" class="form-input" placeholder="e.g. user_xxx or public key" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-emailjs-service">EmailJS Service ID</label>
+              <input type="text" id="cfg-emailjs-service" class="form-input" placeholder="e.g. service_gmail" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-emailjs-template">EmailJS Template ID</label>
+              <input type="text" id="cfg-emailjs-template" class="form-input" placeholder="e.g. template_contact" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-formspree">Alternative: Formspree Endpoint URL</label>
+              <input type="url" id="cfg-formspree" class="form-input" placeholder="https://formspree.io/f/your_id" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">💾 Save Email Configuration</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<button class="fab" id="fab-add-task" onclick="openModal('task-modal')" aria-label="Add new task" title="Add task">+</button>
+
+<!-- ════════════════════════════════════════════════
+     CONTACT
+════════════════════════════════════════════════ -->
+<section id="contact" class="section" aria-label="Contact">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <div class="section-label">Get In Touch</div>
+      <h2 class="section-title">Contact Me</h2>
+      <p class="section-desc">Interested in collaborating, offering an internship, or just saying hello? Reach out anytime.</p>
+      <div class="divider" style="margin-top:20px"></div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info" data-reveal>
+        <h3>Let's Connect</h3>
+        <p>I'm currently open to internship opportunities, project collaborations, and networking. Fill in the form or reach me directly through the channels below.</p>
+        <div class="contact-links">
+          <a href="mailto:697harrish@gmail.com" class="contact-link-item">
+            <div class="contact-link-icon">✉️</div>
+            <div class="contact-link-text"><div class="link-label">Email</div><div class="link-value">697harrish@gmail.com</div></div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a href="https://www.linkedin.com/in/harrish-r-s-256a1237a/" target="_blank" rel="noopener" class="contact-link-item">
+            <div class="contact-link-icon">💼</div>
+            <div class="contact-link-text"><div class="link-label">LinkedIn</div><div class="link-value">harrish-r-s-256a1237a</div></div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a href="https://github.com/harrish-rs-tech" target="_blank" rel="noopener" class="contact-link-item">
+            <div class="contact-link-icon">🐙</div>
+            <div class="contact-link-text"><div class="link-label">GitHub</div><div class="link-value">harrish-rs-tech</div></div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="contact-link-item">
+            <div class="contact-link-icon">🎓</div>
+            <div class="contact-link-text"><div class="link-label">Talentely</div><div class="link-value">View Learning Profile</div></div>
+            <span style="color:var(--text-muted)">→</span>
+          </a>
+        </div>
+      </div>
+      <div class="contact-form-wrap" data-reveal>
+        <h3 style="margin-bottom:6px">Send a Message</h3>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:24px" id="contact-form-info">
+          Messages are delivered to <strong style="color:var(--teal-400)">697harrish@gmail.com</strong> via EmailJS.
+          <span id="emailjs-status-note" style="color:#fdba74">Configure your EmailJS keys in script.js to activate delivery.</span>
+        </p>
+        <form id="contact-form" onsubmit="handleContactSubmit(event)" novalidate>
+          <!-- Honeypot spam trap — hidden from real users -->
+          <div class="hp-field" aria-hidden="true">
+            <input type="text" name="_honey" id="hp-field" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="cf-name">Name *</label>
+              <input type="text" id="cf-name" class="form-input" placeholder="Your full name" required maxlength="100" autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-email">Email *</label>
+              <input type="email" id="cf-email" class="form-input" placeholder="you@example.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cf-subject">Subject</label>
+            <input type="text" id="cf-subject" class="form-input" placeholder="Internship Opportunity / Collaboration / Hello" maxlength="150" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cf-message">Message *</label>
+            <textarea id="cf-message" class="form-input form-textarea" placeholder="Your message…" required minlength="10" maxlength="2000"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%" id="contact-submit-btn">📨 Send Message</button>
+          <div id="contact-feedback" class="form-feedback" role="alert" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div style="display:flex;justify-content:center;margin-bottom:8px">
+      <span class="nav-logo"><span>H</span>arrish R S</span>
+    </div>
+    <p>B.Tech Artificial Intelligence and Data Science · V.S.B. Engineering College, Karur</p>
+    <p style="margin-top:6px">Built with ❤️ · <span id="footer-year"></span></p>
+  </div>
+</footer>
+
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+<script src="script.js"></script>
+</body>
+</html>
