@@ -541,7 +541,8 @@
           Manage your tasks, update profile bio, education timeline, skills, projects, certificates, and export full site backups.
         </p>
       </div>
-      <div style="display:flex;gap:10px;align-items:center">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="publishSiteDataToGitHub()" title="Publish dashboard changes to live website for everyone">🚀 Publish Live</button>
         <button class="btn btn-ghost btn-sm" onclick="exportSiteData()" title="Export all website data to JSON">⬇️ Export Site Data</button>
         <button class="btn btn-ghost btn-sm" onclick="lockDashboard()">🔒 Lock</button>
       </div>
@@ -823,6 +824,31 @@
     <!-- ── TAB 6: BACKUP & EMAIL ── -->
     <div id="tab-panel-backup" class="dash-tab-panel" role="tabpanel">
       <div class="dash-grid-2">
+        <!-- Live Website Sync / Publish Card -->
+        <div class="dash-card" style="border: 1px solid rgba(45, 212, 191, 0.35); background: rgba(13, 27, 46, 0.85); grid-column: 1 / -1;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <h3 style="color:var(--teal-400);margin:0">🚀 Publish Changes to Live Website (Render)</h3>
+            <span class="badge badge-teal" style="font-size:0.75rem">1-Click Live Sync</span>
+          </div>
+          <p>Instantly publish your dashboard edits (profile, timeline, skills, certifications) so that your live website updates for all visitors and mobile phones automatically!</p>
+          <div style="margin-bottom:14px;max-width:580px">
+            <label class="form-label" for="dash-gh-token">GitHub Personal Access Token (PAT)</label>
+            <div style="position:relative;display:flex;align-items:center">
+              <input type="password" id="dash-gh-token" class="form-input" placeholder="ghp_xxxx or github_pat_xxxx" autocomplete="off" style="padding-right:42px" />
+              <button type="button" onclick="togglePasswordVisibility('dash-gh-token', this)" style="position:absolute;right:10px;background:transparent;border:none;cursor:pointer;font-size:1.1rem;padding:4px;" title="Toggle visibility">👁️</button>
+            </div>
+            <p style="font-size:0.75rem;color:var(--text-muted);margin-top:6px">
+              🔒 Stored safely in your private browser localStorage only.
+              <a href="https://github.com/settings/tokens/new?scopes=repo&description=Portfolio+Live+Sync" target="_blank" rel="noopener" style="color:var(--teal-400);text-decoration:underline;margin-left:4px">Generate 1-click token on GitHub (tick 'repo') →</a>
+            </p>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <button type="button" id="btn-publish-live" class="btn btn-primary btn-sm" onclick="publishSiteDataToGitHub()">🚀 Publish Changes to Live Website</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="saveGitHubToken()">💾 Save Token</button>
+            <span id="publish-live-status" style="font-size:0.82rem;color:var(--text-secondary)"></span>
+          </div>
+        </div>
+
         <div class="dash-card">
           <h3>💾 Complete Site Backup &amp; Transfer</h3>
           <p>Export all profile info, timeline, skills, projects, certificates, and tasks to a single JSON backup. You can import this backup on any device or computer.</p>
@@ -834,7 +860,7 @@
             </label>
           </div>
           <p style="font-size:0.75rem;color:#fdba74">
-            💡 <strong>Permanent Hosting Tip:</strong> When publishing to GitHub Pages, Netlify, or Vercel, copy the exported JSON into <code>DEFAULT_DATA</code> in <code>script.js</code> so your changes are visible to every visitor by default without requiring localStorage.
+            💡 <strong>Permanent Hosting Tip:</strong> Click <strong>"Publish Changes to Live Website"</strong> above anytime you update content so Render automatically deploys your updates!
           </p>
         </div>
 

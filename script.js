@@ -1387,8 +1387,10 @@ function switchDashTab(tabName) {
   if (tabName === 'profile') populateProfileForm();
   if (tabName === 'timeline') populateTimelineForm();
   if (tabName === 'content') renderDashContentLists();
-  if (tabName === 'certs') renderDashCertsList();
-  if (tabName === 'backup') populateEmailSettingsForm();
+  if (tabName === 'backup') {
+    populateEmailSettingsForm();
+    populateGitHubToken();
+  }
 }
 
 function renderDashContentLists() {
@@ -1507,6 +1509,161 @@ function importSiteData(e) {
     }
   };
   reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════════════
+   LIVE GITHUB SYNC (Publish to Live Website)
+══════════════════════════════════════════════════ */
+function toBase64Unicode(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode('0x' + p1);
+  }));
+}
+
+function saveGitHubToken() {
+  const token = (document.getElementById('dash-gh-token')?.value || '').trim();
+  if (!token) {
+    showToast('Please enter a valid GitHub token to save.', 'error');
+    return;
+  }
+  localStorage.setItem('hrs_gh_token', token);
+  showToast('GitHub token saved securely in browser storage!');
+}
+
+function populateGitHubToken() {
+  const input = document.getElementById('dash-gh-token');
+  if (input) {
+    const saved = localStorage.getItem('hrs_gh_token') || '';
+    if (saved) input.value = saved;
+  }
+}
+
+async function publishSiteDataToGitHub() {
+  const input = document.getElementById('dash-gh-token');
+  const token = (input?.value || '').trim() || localStorage.getItem('hrs_gh_token') || '';
+  const statusEl = document.getElementById('publish-live-status');
+  const btn = document.getElementById('btn-publish-live');
+
+  if (!token) {
+    switchDashTab('backup');
+    if (input) {
+      input.focus();
+      input.style.borderColor = '#f87171';
+    }
+    showToast('Please enter your GitHub Token first to publish live.', 'error');
+    return;
+  }
+
+  localStorage.setItem('hrs_gh_token', token);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Publishing to GitHub…'; }
+  if (statusEl) { statusEl.textContent = '⏳ Connecting to GitHub repository…'; statusEl.style.color = '#fdba74'; }
+
+  try {
+    const repoOwner = 'harrish-rs-tech';
+    const repoName = 'My_Portfolio';
+    const filePath = 'data.json';
+    const apiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`;
+
+    // 1. Fetch current file SHA if it exists
+    let currentSha = null;
+    try {
+      const getRes = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (getRes.ok) {
+        const fileInfo = await getRes.json();
+        currentSha = fileInfo.sha;
+      }
+    } catch (e) {
+      console.warn('Could not fetch existing SHA:', e);
+    }
+
+    // 2. Prepare payload
+    const dataToPublish = {
+      lastUpdated: new Date().toISOString(),
+      profile: STATE.profile || DEFAULT_DATA.profile,
+      timeline: STATE.timeline || DEFAULT_DATA.timeline,
+      projects: STATE.projects || DEFAULT_DATA.projects,
+      skills: STATE.skills || DEFAULT_DATA.skills,
+      achievements: STATE.achievements || DEFAULT_DATA.achievements
+    };
+
+    const jsonStr = JSON.stringify(dataToPublish, null, 2);
+    const contentBase64 = toBase64Unicode(jsonStr);
+
+    // 3. Put new content
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Update live portfolio data via Dashboard',
+        content: contentBase64,
+        sha: currentSha || undefined
+      })
+    });
+
+    if (!putRes.ok) {
+      const errData = await putRes.json().catch(() => ({}));
+      throw new Error(errData.message || `GitHub error ${putRes.status}`);
+    }
+
+    LS.set('hrs_last_edit_time', Date.now());
+    showToast('🎉 Published to GitHub! Render will update live site in ~20s.');
+    if (statusEl) {
+      statusEl.textContent = '✅ Published! Render is deploying changes to your live site.';
+      statusEl.style.color = 'var(--teal-400)';
+    }
+  } catch (err) {
+    console.error('Publish error:', err);
+    showToast(`Publish failed: ${err.message}`, 'error');
+    if (statusEl) {
+      statusEl.textContent = `❌ Failed: ${err.message}`;
+      statusEl.style.color = '#f87171';
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 Publish Changes to Live Website'; }
+  }
+}
+
+async function syncFromLiveRemote() {
+  try {
+    const res = await fetch(`data.json?_t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || typeof data !== 'object') return;
+
+    const remoteTime = data.lastUpdated ? new Date(data.lastUpdated).getTime() : 0;
+    const localTime = LS.get('hrs_last_edit_time') || 0;
+
+    const hasLocalOverrides = Boolean(
+      LS.get('hrs_profile') || LS.get('hrs_skills') ||
+      LS.get('hrs_timeline') || LS.get('hrs_projects') || LS.get('hrs_achievements')
+    );
+
+    // If visitor has no local edits, OR remote data is newer than local edits:
+    if (!hasLocalOverrides || remoteTime > localTime) {
+      if (data.profile) STATE.profile = data.profile;
+      if (data.timeline) STATE.timeline = data.timeline;
+      if (Array.isArray(data.projects)) STATE.projects = data.projects;
+      if (Array.isArray(data.skills)) STATE.skills = data.skills;
+      if (Array.isArray(data.achievements)) STATE.achievements = data.achievements;
+
+      renderProfile();
+      renderTimeline();
+      renderProjects();
+      renderSkills();
+      renderAchievements();
+    }
+  } catch (err) {
+    console.log('Remote sync note:', err.message);
+  }
 }
 
 /* ══════════════════════════════════════════════════
@@ -1902,6 +2059,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSkills();
   renderAchievements();
 
+  // Dynamically sync latest published data from data.json (for all visitors & devices)
+  syncFromLiveRemote();
+
   // Nav & animations
   initNav();
   initScrollReveal();
@@ -1926,6 +2086,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateProfileForm();
     populateTimelineForm();
     populateEmailSettingsForm();
+    populateGitHubToken();
   }
 
   // Admin shortcut: Ctrl+Shift+A
@@ -1999,5 +2160,7 @@ window.exportTasks = exportTasks;
 window.handleContactSubmit = handleContactSubmit;
 window.sendTestEmail = sendTestEmail;
 window.updateEmailStatusNote = updateEmailStatusNote;
+window.publishSiteDataToGitHub = publishSiteDataToGitHub;
+window.saveGitHubToken = saveGitHubToken;
 window.toggleMobileNav = toggleMobileNav;
 window.closeMobileNav = closeMobileNav;
