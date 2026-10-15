@@ -67,7 +67,7 @@ const DEFAULT_DATA = {
   // Personal profile details
   profile: {
     name: 'Harrish R S',
-    title: 'B.Tech AI & Data Science Student',
+    title: 'B.Tech Artificial Intelligence & Data Science Student',
     college: 'V S B Engineering College Karur',
     location: 'Karur',
     gradYear: '2029',
@@ -94,36 +94,27 @@ const DEFAULT_DATA = {
     pega: {
       title: 'Pega Internship',
       organization: 'Pega Systems',
-      period: '',         // Left blank until user provides confirmed dates
-      location: '',       // Left blank until user provides confirmed location
-      responsibilities: '', // Left blank until user provides
-      certificate: ''
+      start: '4th August 2026',
+      end: '3rd September 2026',
+      period: '4th August 2026 – 3rd September 2026',
+      location: '',
+      responsibilities: '',
+      certificate: 'https://drive.google.com/file/d/1a7pVR481GZZEe2Ea68xoC00OlTNBHC3z/view?usp=drive_link'
     },
     school: {
       school: 'Little Flower Matriculation Higher Secondary School, Karur',
       year: '2025',
       title: 'Higher Secondary Education (12th Standard)',
-      specialization: '', // Left blank until user provides
-      marks: '',          // Left blank until user provides
-      achievements: ''    // Left blank until user provides
+      specialization: '',
+      marks: '',
+      achievements: ''
     }
   },
 
   // Projects — starter placeholder card so project section renders immediately
-  projects: [
-    {
-      id: 'proj_placeholder_1',
-      title: '[Project Placeholder] AI & Data Science Project',
-      description: '[Placeholder: Describe your project goal, methodology, dataset, and results here. Edit or remove this placeholder in the dashboard.]',
-      tech: ['Python', 'Machine Learning', 'Data Analysis'],
-      demo: '',
-      code: 'https://github.com/harrish-rs-tech',
-      emoji: '🤖',
-      image: ''
-    }
-  ],
+  projects: [],
 
-  // Skills — clean set categorized into Programming, AI/ML, Data Science, Tools, and Soft Skills
+  // Skills — categorized into Programming, AI/ML, Data Science, Tools, and Soft Skills
   skills: [
     {
       category: 'Programming',
@@ -136,36 +127,67 @@ const DEFAULT_DATA = {
     {
       category: 'AI/ML',
       icon: '🤖',
-      items: []
+      items: [
+        { id: 'sk_ml',    name: 'Machine Learning' },
+        { id: 'sk_ai',    name: 'Artificial Intelligence' },
+        { id: 'sk_genai', name: 'Generative AI' }
+      ]
     },
     {
       category: 'Data Science',
       icon: '📊',
-      items: []
+      items: [
+        { id: 'sk_da',      name: 'Data Analytics' },
+        { id: 'sk_numpy',   name: 'NumPy' },
+        { id: 'sk_pandas',  name: 'Pandas' },
+        { id: 'sk_dataviz', name: 'Data Visualization' }
+      ]
     },
     {
       category: 'Tools',
       icon: '🛠️',
-      items: []
+      items: [
+        { id: 'sk_git',     name: 'Git' },
+        { id: 'sk_github',  name: 'GitHub' },
+        { id: 'sk_vscode',  name: 'VS Code' },
+        { id: 'sk_mysql',   name: 'MySQL' },
+        { id: 'sk_powerbi', name: 'Power BI' }
+      ]
     },
     {
       category: 'Soft Skills',
       icon: '🌟',
-      items: []
+      items: [
+        { id: 'sk_comm',       name: 'Communication' },
+        { id: 'sk_teamwork',   name: 'Teamwork' },
+        { id: 'sk_probsolve',  name: 'Problem Solving' },
+        { id: 'sk_adapt',      name: 'Adaptability' }
+      ]
     }
   ],
 
-  // Achievements — IIT Madras 8-Week CODE Course is real data
+  // Achievements — certifications
   achievements: [
+    {
+      id: 'ach_infy_2026',
+      title: 'Python Foundation Certification',
+      issuer: 'infyspringboard',
+      date: '2026-08',
+      description: 'This certification has motivated me to strengthen my Python programming skills and continue exploring the world of technology.',
+      link: 'https://drive.google.com/file/d/1w88Zvyd5d6icBla605Mv4nRBMFUSfYaT/view?usp=drive_link',
+      emoji: '🏆',
+      imageData: null,
+      imageType: null
+    },
     {
       id: 'ach_iit_2024',
       title: 'Data Science and AI – 8-Week Certification Course',
       issuer: 'Centre for Outreach and Digital Education (CODE), IIT Madras · School Connect',
-      date: '2024-10',          // October 2024
+      date: '2024-10',
       description: 'Completed an 8-week certification course on Data Science and Artificial Intelligence, conducted by the Centre for Outreach and Digital Education (CODE) at IIT Madras in association with School Connect.',
-      link: '',                  // Add your credential verification URL here if available
+      link: 'https://drive.google.com/file/d/1OjghRCZq1ZAnBiG-h1UH6t3mCinf3ODc/view?usp=drive_link',
       emoji: '🎓',
-      imageData: null,           // Set via upload or leave null
+      imageData: null,
       imageType: null
     }
   ]
