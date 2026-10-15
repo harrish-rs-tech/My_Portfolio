@@ -29,7 +29,10 @@
     <p>This section is private. Enter your password to continue.</p>
     <div class="form-group">
       <label class="form-label" for="auth-password">Password</label>
-      <input type="password" id="auth-password" class="form-input" placeholder="Enter password…" autocomplete="current-password" />
+      <div style="position:relative;display:flex;align-items:center;">
+        <input type="password" id="auth-password" class="form-input" placeholder="Enter password…" autocomplete="current-password" style="padding-right:42px;width:100%;" />
+        <button type="button" onclick="togglePasswordVisibility('auth-password', this)" style="position:absolute;right:10px;background:transparent;border:none;cursor:pointer;font-size:1.1rem;padding:4px;" title="Show/Hide Password" aria-label="Toggle password visibility">👁️</button>
+      </div>
     </div>
     <button class="btn btn-primary" style="width:100%" onclick="handleAuth()" id="auth-submit-btn">Unlock Dashboard</button>
     <div id="auth-error" class="auth-error" role="alert" aria-live="polite"></div>
@@ -107,9 +110,20 @@
         <input type="url" id="proj-code-input" class="form-input" placeholder="https://github.com/…" />
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label" for="proj-emoji-input">Project Icon (emoji)</label>
-      <input type="text" id="proj-emoji-input" class="form-input" placeholder="🤖" maxlength="4" style="width:80px" />
+    <div class="form-row" style="margin-top:16px">
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="proj-image-input">Screenshot / Image URL</label>
+        <input type="url" id="proj-image-input" class="form-input" placeholder="https://… or leave blank" />
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="proj-emoji-input">Icon (emoji fallback)</label>
+        <input type="text" id="proj-emoji-input" class="form-input" placeholder="🤖" maxlength="4" style="width:80px" />
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:16px">
+      <label class="form-label" for="proj-img-file-input">Or Upload Screenshot Image</label>
+      <input type="file" id="proj-img-file-input" class="form-input" accept="image/*" style="padding:8px" />
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Max 3MB JPG/PNG/WebP. Stored in your browser for preview.</p>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost btn-sm" onclick="closeModal('project-modal')">Cancel</button>
@@ -181,10 +195,10 @@
     <div class="form-group">
       <label class="form-label" for="skill-cat-input">Category *</label>
       <select id="skill-cat-input" class="form-input form-select">
-        <option value="Programming Languages">💻 Programming Languages</option>
-        <option value="Technical Skills">🔧 Technical Skills</option>
-        <option value="Data Analytics">📊 Data Analytics</option>
-        <option value="Tools &amp; Platforms">🛠️ Tools &amp; Platforms</option>
+        <option value="Programming">💻 Programming</option>
+        <option value="AI/ML">🤖 AI/ML</option>
+        <option value="Data Science">📊 Data Science</option>
+        <option value="Tools">🛠️ Tools</option>
         <option value="Soft Skills">🌟 Soft Skills</option>
       </select>
     </div>
@@ -256,7 +270,7 @@
         <div class="hero-availability">
           <span class="badge badge-teal" id="availability-badge">
             <span class="pulse-dot" aria-hidden="true"></span>
-            Open to Internships
+            <span id="availability-badge-text">Open to Internships</span>
           </span>
         </div>
         <p class="hero-greeting">Hello, I'm</p>
@@ -264,7 +278,7 @@
         <p class="hero-title" id="hero-title">B.Tech Artificial Intelligence and Data Science Student</p>
         <p class="hero-bio" id="hero-bio">
           Passionate about building intelligent systems and data-driven solutions.
-          Studying at <strong style="color:var(--text-primary)">V.S.B. Engineering College, Karur</strong>,
+          Studying at <strong style="color:var(--text-primary)" id="hero-college-label">V S B Engineering College Karur</strong>,
           with a focus on machine learning, Python programming, Java, and data analytics.
           Actively seeking internships to apply academic knowledge to impactful real-world problems.
         </p>
@@ -283,7 +297,7 @@
             <div class="stat-label">Certifications</div>
           </div>
           <div class="stat-item">
-            <div class="stat-value">2029</div>
+            <div class="stat-value" id="stat-grad">2029</div>
             <div class="stat-label">Grad Year</div>
           </div>
         </div>
@@ -314,12 +328,12 @@
     <div class="about-grid">
       <div class="about-bio" data-reveal>
         <h3 style="margin-bottom:16px">My Story &amp; Vision</h3>
-        <p>
-          I'm <strong style="color:var(--text-primary)">Harrish R S</strong>, a B.Tech student specialising in
+        <p id="about-bio-p1">
+          I'm <strong style="color:var(--text-primary)" id="about-bio-name">Harrish R S</strong>, a B.Tech student specialising in
           <strong style="color:var(--teal-400)">Artificial Intelligence and Data Science</strong> at
-          V.S.B. Engineering College, Karur. I'm driven by curiosity and a belief that AI can solve meaningful real-world problems.
+          <span id="about-bio-college">V S B Engineering College Karur</span>. I'm driven by curiosity and a belief that AI can solve meaningful real-world problems.
         </p>
-        <p>
+        <p id="about-bio-p2">
           My academic focus spans machine learning, Python and Java programming, statistical analysis, and data analytics.
           I enjoy applying these skills to practical projects and am actively seeking internship opportunities
           to contribute, learn, and grow in a professional environment.
@@ -329,7 +343,7 @@
           My goal is to build a career at the intersection of artificial intelligence and data-driven decision-making.
         </p>
         <p style="margin-top:24px">
-          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="btn btn-outline btn-sm">🎓 View Talentely Profile</a>
+          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="btn btn-outline btn-sm" id="about-talentely-link">🎓 View Talentely Profile</a>
         </p>
       </div>
       <div class="about-highlights" data-reveal>
@@ -337,42 +351,42 @@
           <div class="highlight-icon">🎓</div>
           <div class="highlight-info">
             <h4>Degree</h4>
-            <p>B.Tech – Artificial Intelligence and Data Science</p>
+            <p id="about-degree">B.Tech – Artificial Intelligence and Data Science</p>
           </div>
         </div>
         <div class="highlight-card">
           <div class="highlight-icon">🏫</div>
           <div class="highlight-info">
             <h4>College</h4>
-            <p>V.S.B. Engineering College, Karur</p>
+            <p id="about-college">V S B Engineering College Karur</p>
           </div>
         </div>
         <div class="highlight-card">
           <div class="highlight-icon">📍</div>
           <div class="highlight-info">
             <h4>Location</h4>
-            <p>Karur, Tamil Nadu, India</p>
+            <p id="about-location">Karur, Tamil Nadu, India</p>
           </div>
         </div>
         <div class="highlight-card">
           <div class="highlight-icon">📅</div>
           <div class="highlight-info">
             <h4>Expected Graduation</h4>
-            <p>2029</p>
+            <p id="about-grad">2029</p>
           </div>
         </div>
         <div class="highlight-card">
           <div class="highlight-icon">🎯</div>
           <div class="highlight-info">
             <h4>Areas of Interest</h4>
-            <p>Machine Learning · Python Programming · Java Programming · Data Analytics</p>
+            <p id="about-interests">Machine Learning · Python Programming · Java Programming · Data Analytics</p>
           </div>
         </div>
         <div class="highlight-card">
           <div class="highlight-icon">🌐</div>
           <div class="highlight-info">
             <h4>Languages</h4>
-            <p>Tamil (Native) · English (Proficient)</p>
+            <p id="about-languages">Tamil (Native) · English (Proficient)</p>
           </div>
         </div>
       </div>
@@ -431,10 +445,11 @@
       <!-- Resume upload / download -->
       <div class="resume-card" data-reveal>
         <h3 style="margin-bottom:8px">📄 Resume File</h3>
-        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:24px">
-          Upload your PDF resume here. It is stored securely in your browser (localStorage).
-          <strong style="color:#fdba74">For public download across all devices:</strong> place <code>resume.pdf</code> in the same folder as <code>index.html</code>.
-        </p>
+        <div style="background:rgba(45,212,191,0.06);border:1px solid rgba(45,212,191,0.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;font-size:0.83rem;line-height:1.6">
+          <strong style="color:var(--teal-400)">💡 Storage &amp; Download Notice:</strong><br />
+          • <strong>In-Browser Upload:</strong> Uploading your PDF below caches it in browser local memory for previewing and testing downloads immediately on this device.<br />
+          • <strong>Public Downloads for Recruiters:</strong> For cross-device public access on GitHub Pages, Netlify, or Vercel, keep your updated file as <code>resume.pdf</code> in the project folder alongside <code>index.html</code>.
+        </div>
         <div id="resume-drop-zone" class="resume-upload-zone"
           onclick="document.getElementById('resume-file-input').click()"
           ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleResumeDrop(event)"
@@ -573,7 +588,7 @@
     <div id="tab-panel-profile" class="dash-tab-panel" role="tabpanel">
       <div class="dash-card">
         <h3>Edit Personal &amp; Academic Profile</h3>
-        <p>Update your headline, bio, college, graduation year, and areas of interest. Changes update instantly across your portfolio and save in browser storage.</p>
+        <p>Update your headline, bio, college, graduation year, availability badge, and professional links. Changes update instantly across your portfolio and save persistently in browser storage.</p>
         <form onsubmit="saveProfileSettings(event)">
           <div class="form-row">
             <div class="form-group">
@@ -588,16 +603,32 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="dash-prof-college">College / Institution</label>
-              <input type="text" id="dash-prof-college" class="form-input" value="V.S.B. Engineering College, Karur" required />
+              <input type="text" id="dash-prof-college" class="form-input" value="V S B Engineering College Karur" required />
             </div>
             <div class="form-group">
               <label class="form-label" for="dash-prof-grad">Graduation Year</label>
               <input type="text" id="dash-prof-grad" class="form-input" value="2029" required />
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-badge-text">Availability Badge Text</label>
+              <input type="text" id="dash-prof-badge-text" class="form-input" value="Open to internships" placeholder="e.g. Open to internships" />
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;padding-top:28px">
+              <label style="display:inline-flex;align-items:center;gap:10px;cursor:pointer;color:var(--text-primary);font-size:0.9rem">
+                <input type="checkbox" id="dash-prof-badge-visible" checked style="width:18px;height:18px;accent-color:var(--teal-400);cursor:pointer" />
+                Show Availability Badge on Hero
+              </label>
+            </div>
+          </div>
           <div class="form-group">
             <label class="form-label" for="dash-prof-interests">Areas of Interest</label>
             <input type="text" id="dash-prof-interests" class="form-input" value="Machine Learning, Python Programming, Java Programming, and Data Analytics" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dash-prof-languages">Languages</label>
+            <input type="text" id="dash-prof-languages" class="form-input" value="Tamil (Native) · English (Proficient)" placeholder="e.g. Tamil (Native) · English (Proficient)" />
           </div>
           <div class="form-group">
             <label class="form-label" for="dash-prof-bio">Hero Bio Description</label>
@@ -613,6 +644,20 @@
               <input type="text" id="dash-prof-location" class="form-input" value="Karur, Tamil Nadu, India" />
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-linkedin">LinkedIn Profile URL</label>
+              <input type="url" id="dash-prof-linkedin" class="form-input" value="https://www.linkedin.com/in/harrish-r-s-256a1237a/" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dash-prof-github">GitHub Profile URL</label>
+              <input type="url" id="dash-prof-github" class="form-input" value="https://github.com/harrish-rs-tech" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dash-prof-talentely">Talentely Profile URL</label>
+            <input type="url" id="dash-prof-talentely" class="form-input" value="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" />
+          </div>
           <button type="submit" class="btn btn-primary btn-sm">💾 Save Profile Details</button>
         </form>
       </div>
@@ -621,6 +666,37 @@
     <!-- ── TAB 3: EDUCATION & INTERNSHIP ── -->
     <div id="tab-panel-timeline" class="dash-tab-panel" role="tabpanel">
       <div class="dash-grid-2">
+        <!-- B.Tech Degree Card -->
+        <div class="dash-card">
+          <h3>🎓 B.Tech Degree Education</h3>
+          <p>Update your college, degree, graduation year, and academic description.</p>
+          <form onsubmit="saveBtechTimeline(event)">
+            <div class="form-group">
+              <label class="form-label" for="btech-in-title">Degree / Specialization</label>
+              <input type="text" id="btech-in-title" class="form-input" value="B.Tech – Artificial Intelligence and Data Science" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="btech-in-college">College / Institution</label>
+              <input type="text" id="btech-in-college" class="form-input" value="V S B Engineering College Karur" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="btech-in-period">Period</label>
+                <input type="text" id="btech-in-period" class="form-input" value="2025 – Present" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="btech-in-grad">Expected Graduation</label>
+                <input type="text" id="btech-in-grad" class="form-input" value="2029" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="btech-in-desc">Curriculum Highlights &amp; Focus</label>
+              <textarea id="btech-in-desc" class="form-input form-textarea" rows="3" placeholder="Key focus areas…"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">💾 Save B.Tech Details</button>
+          </form>
+        </div>
+
         <!-- Pega Internship Card -->
         <div class="dash-card">
           <h3>💼 Pega Internship</h3>
@@ -763,7 +839,11 @@
 
         <div class="dash-card">
           <h3>✉️ Email Delivery Settings</h3>
-          <p>Messages submitted through the contact form are sent to <strong>697harrish@gmail.com</strong>.</p>
+          <p>Messages submitted through the contact form are delivered to <strong>697harrish@gmail.com</strong>. Direct delivery is active by default. You can optionally connect EmailJS or Formspree below.</p>
+          <div style="margin:14px 0 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <button type="button" id="btn-test-email" class="btn btn-outline btn-sm" onclick="sendTestEmail()">📨 Send Test Message to 697harrish@gmail.com</button>
+            <span id="dash-email-status" style="font-size:0.82rem;color:var(--teal-400);font-weight:500">🟢 Direct delivery active</span>
+          </div>
           <form onsubmit="saveEmailSettings(event)">
             <div class="form-group">
               <label class="form-label" for="cfg-emailjs-public">EmailJS Public Key</label>
@@ -782,6 +862,32 @@
               <input type="url" id="cfg-formspree" class="form-input" placeholder="https://formspree.io/f/your_id" />
             </div>
             <button type="submit" class="btn btn-primary btn-sm">💾 Save Email Configuration</button>
+          </form>
+        </div>
+
+        <!-- Dashboard Password Card -->
+        <div class="dash-card">
+          <h3>🔐 Dashboard Password &amp; Privacy</h3>
+          <p>Change your private dashboard access password. (Current default: <code>Harrizzz_.697</code>).</p>
+          <form onsubmit="saveNewDashboardPassword(event)">
+            <div class="form-group">
+              <label class="form-label" for="dash-new-pass-input">New Password</label>
+              <div style="position:relative;display:flex;align-items:center;">
+                <input type="password" id="dash-new-pass-input" class="form-input" placeholder="Enter new password (min 6 characters)…" minlength="6" required autocomplete="new-password" style="padding-right:42px;width:100%;" />
+                <button type="button" onclick="togglePasswordVisibility('dash-new-pass-input', this)" style="position:absolute;right:10px;background:transparent;border:none;cursor:pointer;font-size:1.1rem;padding:4px;" title="Toggle visibility" aria-label="Toggle password visibility">👁️</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dash-confirm-pass-input">Confirm New Password</label>
+              <div style="position:relative;display:flex;align-items:center;">
+                <input type="password" id="dash-confirm-pass-input" class="form-input" placeholder="Repeat new password…" minlength="6" required autocomplete="new-password" style="padding-right:42px;width:100%;" />
+                <button type="button" onclick="togglePasswordVisibility('dash-confirm-pass-input', this)" style="position:absolute;right:10px;background:transparent;border:none;cursor:pointer;font-size:1.1rem;padding:4px;" title="Toggle visibility" aria-label="Toggle password visibility">👁️</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button type="submit" class="btn btn-primary btn-sm">🔒 Update Password</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="resetDashboardPassword()">↺ Reset to Harrizzz_.697</button>
+            </div>
           </form>
         </div>
       </div>
@@ -808,24 +914,24 @@
         <h3>Let's Connect</h3>
         <p>I'm currently open to internship opportunities, project collaborations, and networking. Fill in the form or reach me directly through the channels below.</p>
         <div class="contact-links">
-          <a href="mailto:697harrish@gmail.com" class="contact-link-item">
+          <a href="mailto:697harrish@gmail.com" class="contact-link-item" id="contact-link-email">
             <div class="contact-link-icon">✉️</div>
-            <div class="contact-link-text"><div class="link-label">Email</div><div class="link-value">697harrish@gmail.com</div></div>
+            <div class="contact-link-text"><div class="link-label">Email</div><div class="link-value" id="contact-val-email">697harrish@gmail.com</div></div>
             <span style="color:var(--text-muted)">→</span>
           </a>
-          <a href="https://www.linkedin.com/in/harrish-r-s-256a1237a/" target="_blank" rel="noopener" class="contact-link-item">
+          <a href="https://www.linkedin.com/in/harrish-r-s-256a1237a/" target="_blank" rel="noopener" class="contact-link-item" id="contact-link-linkedin">
             <div class="contact-link-icon">💼</div>
-            <div class="contact-link-text"><div class="link-label">LinkedIn</div><div class="link-value">harrish-r-s-256a1237a</div></div>
+            <div class="contact-link-text"><div class="link-label">LinkedIn</div><div class="link-value" id="contact-val-linkedin">harrish-r-s-256a1237a</div></div>
             <span style="color:var(--text-muted)">→</span>
           </a>
-          <a href="https://github.com/harrish-rs-tech" target="_blank" rel="noopener" class="contact-link-item">
+          <a href="https://github.com/harrish-rs-tech" target="_blank" rel="noopener" class="contact-link-item" id="contact-link-github">
             <div class="contact-link-icon">🐙</div>
-            <div class="contact-link-text"><div class="link-label">GitHub</div><div class="link-value">harrish-rs-tech</div></div>
+            <div class="contact-link-text"><div class="link-label">GitHub</div><div class="link-value" id="contact-val-github">harrish-rs-tech</div></div>
             <span style="color:var(--text-muted)">→</span>
           </a>
-          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="contact-link-item">
+          <a href="https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff" target="_blank" rel="noopener" class="contact-link-item" id="contact-link-talentely">
             <div class="contact-link-icon">🎓</div>
-            <div class="contact-link-text"><div class="link-label">Talentely</div><div class="link-value">View Learning Profile</div></div>
+            <div class="contact-link-text"><div class="link-label">Talentely</div><div class="link-value" id="contact-val-talentely">View Learning Profile</div></div>
             <span style="color:var(--text-muted)">→</span>
           </a>
         </div>
@@ -833,8 +939,8 @@
       <div class="contact-form-wrap" data-reveal>
         <h3 style="margin-bottom:6px">Send a Message</h3>
         <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:24px" id="contact-form-info">
-          Messages are delivered to <strong style="color:var(--teal-400)">697harrish@gmail.com</strong> via EmailJS.
-          <span id="emailjs-status-note" style="color:#fdba74">Configure your EmailJS keys in script.js to activate delivery.</span>
+          Messages are delivered to <strong style="color:var(--teal-400)">697harrish@gmail.com</strong>.
+          <span id="emailjs-status-note" style="color:var(--teal-400);margin-left:6px">🟢 Direct delivery active</span>
         </p>
         <form id="contact-form" onsubmit="handleContactSubmit(event)" novalidate>
           <!-- Honeypot spam trap — hidden from real users -->

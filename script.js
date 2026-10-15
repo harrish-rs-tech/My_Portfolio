@@ -24,27 +24,29 @@
 // DASHBOARD PASSWORD — Change before publishing!
 // ──────────────────────────────────────────────────
 const DASHBOARD_CONFIG = {
-  password: 'harrish2024',          // ← CHANGE THIS before going live
+  password: 'Harrizzz_.697',          // ← CHANGE THIS before going live
   sessionKey: 'hrsPortfolioDash',
   sessionDuration: 8 * 60 * 60 * 1000  // 8 hours
 };
 
 // ──────────────────────────────────────────────────
-// EMAILJS CONFIGURATION
-// HOW TO SET UP (free, no backend needed):
-//   1. Sign up at https://www.emailjs.com (free tier: 200 emails/month)
-//   2. Create an Email Service (Gmail recommended) → copy the Service ID
+// EMAIL DELIVERY CONFIGURATION
+// Direct delivery to 697harrish@gmail.com is ACTIVE by default via FormSubmit!
+//
+// OPTIONAL: If you prefer EmailJS (free tier: 200 emails/month):
+//   1. Sign up at https://www.emailjs.com
+//   2. Create an Email Service (e.g. Gmail) → copy the Service ID
 //   3. Create an Email Template with variables:
 //        {{from_name}}, {{from_email}}, {{subject}}, {{message}}
 //      Set "To Email" to 697harrish@gmail.com in the template settings.
 //   4. Go to Account → API Keys → copy your Public Key
-//   5. Paste all three values below, then re-open the site.
+//   5. Paste the three values below or in Dashboard → Backup & Email.
 // ──────────────────────────────────────────────────
 const EMAILJS_CONFIG = {
-  publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',      // ← Paste your Public Key
-  serviceId: 'YOUR_EMAILJS_SERVICE_ID',      // ← Paste your Service ID
-  templateId: 'YOUR_EMAILJS_TEMPLATE_ID',    // ← Paste your Template ID
-  configured: false   // ← Set to TRUE once you have filled the three values above
+  publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',      // ← Paste your Public Key (optional)
+  serviceId: 'YOUR_EMAILJS_SERVICE_ID',      // ← Paste your Service ID (optional)
+  templateId: 'YOUR_EMAILJS_TEMPLATE_ID',    // ← Paste your Template ID (optional)
+  configured: false                          // ← Set to true once filled (or set via Dashboard)
 };
 
 const FORMSPREE_CONFIG = {
@@ -65,12 +67,15 @@ const DEFAULT_DATA = {
   // Personal profile details
   profile: {
     name: 'Harrish R S',
-    title: 'B.Tech Artificial Intelligence and Data Science Student',
-    college: 'V.S.B. Engineering College, Karur',
-    location: 'Karur, Tamil Nadu, India',
+    title: 'B.Tech AI & Data Science Student',
+    college: 'V S B Engineering College Karur',
+    location: 'Karur',
     gradYear: '2029',
-    bio: 'Passionate about building intelligent systems and data-driven solutions. Studying at V.S.B. Engineering College, Karur, with a focus on machine learning, Python programming, Java, and data analytics. Actively seeking internships to apply academic knowledge to impactful real-world problems.',
+    badgeText: 'Open to internships',
+    badgeVisible: true,
+    bio: 'Passionate about building intelligent systems and data-driven solutions. Studying at V S B Engineering College Karur, with a focus on machine learning, Python programming, Java, and data analytics. Actively seeking internships to apply academic knowledge to impactful real-world problems.',
     interests: 'Machine Learning, Python Programming, Java Programming, and Data Analytics',
+    languages: 'Tamil (Native) · English (Proficient)',
     email: '697harrish@gmail.com',
     linkedin: 'https://www.linkedin.com/in/harrish-r-s-256a1237a/',
     github: 'https://github.com/harrish-rs-tech',
@@ -82,7 +87,7 @@ const DEFAULT_DATA = {
     btech: {
       period: '2025 – Present',
       degree: 'B.Tech – Artificial Intelligence and Data Science',
-      college: 'V.S.B. Engineering College, Karur',
+      college: 'V S B Engineering College Karur',
       gradYear: '2029',
       desc: 'Pursuing undergraduate degree with focus on machine learning, Python and Java programming, data analytics, and AI fundamentals.'
     },
@@ -104,14 +109,24 @@ const DEFAULT_DATA = {
     }
   },
 
-  // Projects — starts empty so users add their own real projects
-  projects: [],
+  // Projects — starter placeholder card so project section renders immediately
+  projects: [
+    {
+      id: 'proj_placeholder_1',
+      title: '[Project Placeholder] AI & Data Science Project',
+      description: '[Placeholder: Describe your project goal, methodology, dataset, and results here. Edit or remove this placeholder in the dashboard.]',
+      tech: ['Python', 'Machine Learning', 'Data Analysis'],
+      demo: '',
+      code: 'https://github.com/harrish-rs-tech',
+      emoji: '🤖',
+      image: ''
+    }
+  ],
 
-  // Skills — clean, uninvented set with Python & Java under Programming Languages;
-  // clean categories ready for user to add more skills without claiming unearned proficiency.
+  // Skills — clean set categorized into Programming, AI/ML, Data Science, Tools, and Soft Skills
   skills: [
     {
-      category: 'Programming Languages',
+      category: 'Programming',
       icon: '💻',
       items: [
         { id: 'sk_py',   name: 'Python' },
@@ -119,24 +134,28 @@ const DEFAULT_DATA = {
       ]
     },
     {
-      category: 'Technical Skills',
-      icon: '🔧',
+      category: 'AI/ML',
+      icon: '🤖',
       items: []
     },
     {
-      category: 'Data Analytics',
+      category: 'Data Science',
       icon: '📊',
       items: []
     },
     {
-      category: 'Tools & Platforms',
+      category: 'Tools',
       icon: '🛠️',
+      items: []
+    },
+    {
+      category: 'Soft Skills',
+      icon: '🌟',
       items: []
     }
   ],
 
-  // Achievements — IIT Madras cert is real data provided by the user.
-  // All placeholder certs removed.
+  // Achievements — IIT Madras 8-Week CODE Course is real data
   achievements: [
     {
       id: 'ach_iit_2024',
@@ -304,10 +323,13 @@ function renderProjects() {
     return;
   }
 
-  grid.innerHTML = STATE.projects.map(p => `
+  grid.innerHTML = STATE.projects.map((p, i) => `
     <article class="project-card" id="project-card-${p.id}">
-      <div class="project-img placeholder-img" aria-label="${escHtml(p.title)} icon" role="img">
-        <span style="font-size:3.5rem">${escHtml(p.emoji || '🚀')}</span>
+      <div class="project-img ${p.image ? '' : 'placeholder-img'}" aria-label="${escHtml(p.title)} preview" role="img">
+        ${p.image
+          ? `<img src="${escHtml(p.image)}" alt="${escHtml(p.title)}" loading="lazy" />`
+          : `<span style="font-size:3.5rem">${escHtml(p.emoji || '🚀')}</span>`
+        }
       </div>
       <div class="project-body">
         <h3>${escHtml(p.title)}</h3>
@@ -318,8 +340,12 @@ function renderProjects() {
         <div class="project-links">
           ${p.demo ? `<a href="${escHtml(p.demo)}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">🌐 Live Demo</a>` : ''}
           ${p.code ? `<a href="${escHtml(p.code)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">🐙 Source Code</a>` : ''}
-          <button class="btn btn-ghost btn-sm admin-only" onclick="editProject('${p.id}')" aria-label="Edit project">✏️</button>
-          <button class="btn btn-ghost btn-sm admin-only" onclick="deleteProject('${p.id}')" aria-label="Delete project" style="color:#f87171">🗑️</button>
+          <div style="margin-left:auto;display:flex;gap:4px">
+            <button class="btn-reorder admin-only" onclick="reorderProject('${p.id}', 'up')" title="Move Up" ${i === 0 ? 'disabled' : ''}>⬆️</button>
+            <button class="btn-reorder admin-only" onclick="reorderProject('${p.id}', 'down')" title="Move Down" ${i === STATE.projects.length - 1 ? 'disabled' : ''}>⬇️</button>
+            <button class="btn btn-ghost btn-sm admin-only" onclick="editProject('${p.id}')" aria-label="Edit project" title="Edit">✏️</button>
+            <button class="btn btn-ghost btn-sm admin-only" onclick="deleteProject('${p.id}')" aria-label="Delete project" title="Delete" style="color:#f87171">🗑️</button>
+          </div>
         </div>
       </div>
     </article>
@@ -356,8 +382,10 @@ function promptAddAchievement() {
 function openAddProject() {
   STATE.editingProjectId = null;
   document.getElementById('proj-modal-title').textContent = 'Add Project';
-  ['proj-title-input','proj-desc-input','proj-tech-input','proj-demo-input','proj-code-input','proj-emoji-input']
+  ['proj-title-input','proj-desc-input','proj-tech-input','proj-demo-input','proj-code-input','proj-emoji-input','proj-image-input']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const fileInput = document.getElementById('proj-img-file-input');
+  if (fileInput) fileInput.value = '';
   openModal('project-modal');
 }
 
@@ -372,36 +400,68 @@ function editProject(id) {
   document.getElementById('proj-demo-input').value = p.demo || '';
   document.getElementById('proj-code-input').value = p.code || '';
   document.getElementById('proj-emoji-input').value = p.emoji || '';
+  document.getElementById('proj-image-input').value = p.image || '';
+  const fileInput = document.getElementById('proj-img-file-input');
+  if (fileInput) fileInput.value = '';
   openModal('project-modal');
 }
 
-function saveProject() {
-  const title = document.getElementById('proj-title-input').value.trim();
-  const desc  = document.getElementById('proj-desc-input').value.trim();
-  if (!title || !desc) { showToast('Title and description are required.', 'error'); return; }
-
-  const project = {
-    id: STATE.editingProjectId || `proj_${Date.now()}`,
-    title,
-    description: desc,
-    tech: document.getElementById('proj-tech-input').value.split(',').map(t => t.trim()).filter(Boolean),
-    demo: document.getElementById('proj-demo-input').value.trim(),
-    code: document.getElementById('proj-code-input').value.trim(),
-    emoji: document.getElementById('proj-emoji-input').value.trim() || '🚀'
-  };
-
-  if (STATE.editingProjectId) {
-    const idx = STATE.projects.findIndex(x => x.id === STATE.editingProjectId);
-    if (idx > -1) STATE.projects[idx] = project;
-    showToast('Project updated!');
-  } else {
-    STATE.projects.unshift(project);
-    showToast('Project added!');
-  }
+function reorderProject(id, direction) {
+  const idx = STATE.projects.findIndex(p => p.id === id);
+  if (idx === -1) return;
+  const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+  if (targetIdx < 0 || targetIdx >= STATE.projects.length) return;
+  const item = STATE.projects.splice(idx, 1)[0];
+  STATE.projects.splice(targetIdx, 0, item);
   saveProjectsToStorage();
   renderProjects();
   if (STATE.activeDashTab === 'content') renderDashContentLists();
-  closeModal('project-modal');
+  showToast('Project order updated!');
+}
+
+function saveProject() {
+  const title = (document.getElementById('proj-title-input').value || '').trim();
+  const desc  = (document.getElementById('proj-desc-input').value || '').trim();
+  if (!title || !desc) { showToast('Title and description are required.', 'error'); return; }
+
+  const imgFileInput = document.getElementById('proj-img-file-input');
+  const file = imgFileInput && imgFileInput.files[0];
+
+  const doSave = (imgData) => {
+    const existing = STATE.editingProjectId ? STATE.projects.find(x => x.id === STATE.editingProjectId) : null;
+    const project = {
+      id: STATE.editingProjectId || `proj_${Date.now()}`,
+      title,
+      description: desc,
+      tech: document.getElementById('proj-tech-input').value.split(',').map(t => t.trim()).filter(Boolean),
+      demo: (document.getElementById('proj-demo-input').value || '').trim(),
+      code: (document.getElementById('proj-code-input').value || '').trim(),
+      emoji: (document.getElementById('proj-emoji-input').value || '').trim() || '🚀',
+      image: imgData || (document.getElementById('proj-image-input').value || '').trim() || (existing ? existing.image : '') || ''
+    };
+
+    if (STATE.editingProjectId) {
+      const idx = STATE.projects.findIndex(x => x.id === STATE.editingProjectId);
+      if (idx > -1) STATE.projects[idx] = project;
+      showToast('Project updated!');
+    } else {
+      STATE.projects.unshift(project);
+      showToast('Project added!');
+    }
+    saveProjectsToStorage();
+    renderProjects();
+    if (STATE.activeDashTab === 'content') renderDashContentLists();
+    closeModal('project-modal');
+  };
+
+  if (file) {
+    if (file.size > 3 * 1024 * 1024) { showToast('Image must be under 3MB.', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => doSave(ev.target.result);
+    reader.readAsDataURL(file);
+  } else {
+    doSave(null);
+  }
 }
 
 function deleteProject(id) {
@@ -423,11 +483,16 @@ function loadProjectsFromStorage() {
    SKILLS  (fully editable via admin UI)
 ══════════════════════════════════════════════════ */
 const SKILL_GROUP_ICONS = {
+  'Programming': '💻',
+  'AI/ML': '🤖',
+  'Data Science': '📊',
+  'Tools': '🛠️',
+  'Soft Skills': '🌟',
+  // Backward compatibility mappings
   'Programming Languages': '💻',
-  'Technical Skills':      '🔧',
-  'Data Analytics':        '📊',
-  'Tools & Platforms':     '🛠️',
-  'Soft Skills':           '🌟'
+  'Technical Skills': '🔧',
+  'Data Analytics': '📊',
+  'Tools & Platforms': '🛠️'
 };
 
 function renderSkills() {
@@ -508,7 +573,6 @@ function deleteSkill(category, idOrName) {
   const group = STATE.skills.find(g => g.category === category);
   if (!group) return;
   group.items = group.items.filter(i => (i.id || i.name || i) !== idOrName && (i.name || i) !== idOrName);
-  // Remove empty groups (except keep core ones)
   saveSkillsToStorage();
   renderSkills();
   showToast('Skill removed.', 'info');
@@ -518,14 +582,28 @@ function saveSkillsToStorage() { LS.set('hrs_skills', STATE.skills); }
 function loadSkillsFromStorage() {
   const saved = LS.get('hrs_skills');
   if (saved && Array.isArray(saved) && saved.length > 0) {
-    STATE.skills = saved;
+    STATE.skills = saved.map(g => {
+      let cat = g.category;
+      if (cat === 'Programming Languages') cat = 'Programming';
+      if (cat === 'Technical Skills') cat = 'AI/ML';
+      if (cat === 'Data Analytics') cat = 'Data Science';
+      if (cat === 'Tools & Platforms') cat = 'Tools';
+      return { ...g, category: cat, icon: SKILL_GROUP_ICONS[cat] || g.icon || '⚙️' };
+    });
   } else {
-    // Deep-clone default skills so edits don't mutate the constant
     STATE.skills = DEFAULT_DATA.skills.map(g => ({
       ...g,
       items: g.items.map(i => ({ ...i }))
     }));
   }
+
+  // Ensure all 5 core categories exist
+  const coreCategories = ['Programming', 'AI/ML', 'Data Science', 'Tools', 'Soft Skills'];
+  coreCategories.forEach(cat => {
+    if (!STATE.skills.some(g => g.category === cat)) {
+      STATE.skills.push({ category: cat, icon: SKILL_GROUP_ICONS[cat] || '⚙️', items: [] });
+    }
+  });
 }
 
 /* ══════════════════════════════════════════════════
@@ -827,9 +905,14 @@ function showDashboardAuth() {
 }
 
 function handleAuth() {
-  const input = document.getElementById('auth-password').value;
+  const input = (document.getElementById('auth-password')?.value || '').trim();
   const errEl = document.getElementById('auth-error');
-  if (input === DASHBOARD_CONFIG.password) {
+  const storedPass = LS.get('hrs_dash_password');
+  const isValid = input === DASHBOARD_CONFIG.password || (storedPass && (input === storedPass || input === String(storedPass).trim()));
+  if (isValid) {
+    if (storedPass === 'harrish2024') {
+      LS.set('hrs_dash_password', DASHBOARD_CONFIG.password);
+    }
     errEl.textContent = '';
     LS.set(DASHBOARD_CONFIG.sessionKey, { ts: Date.now() });
     STATE.dashboardUnlocked = true;
@@ -1038,6 +1121,53 @@ function renderProfile() {
   safeSetText('hero-title', p.title || 'B.Tech Artificial Intelligence and Data Science Student');
   const bioEl = document.getElementById('hero-bio');
   if (bioEl && p.bio) bioEl.textContent = p.bio;
+  safeSetText('hero-college-label', p.college || 'V S B Engineering College Karur');
+  safeSetText('stat-grad', p.gradYear || '2029');
+
+  // Availability badge
+  const badge = document.getElementById('availability-badge');
+  if (badge) {
+    badge.style.display = p.badgeVisible === false ? 'none' : 'inline-flex';
+    safeSetText('availability-badge-text', p.badgeText || 'Open to Internships');
+  }
+
+  // About Section
+  safeSetText('about-bio-name', p.name || 'Harrish R S');
+  safeSetText('about-bio-college', p.college || 'V S B Engineering College Karur');
+  safeSetText('about-college', p.college || 'V S B Engineering College Karur');
+  safeSetText('about-degree', p.title || 'B.Tech – Artificial Intelligence and Data Science');
+  safeSetText('about-location', p.location || 'Karur, Tamil Nadu, India');
+  safeSetText('about-grad', p.gradYear || '2029');
+  safeSetText('about-interests', p.interests || 'Machine Learning · Python Programming · Java Programming · Data Analytics');
+  safeSetText('about-languages', p.languages || 'Tamil (Native) · English (Proficient)');
+
+  const talentelyBtn = document.getElementById('about-talentely-link');
+  if (talentelyBtn && p.talentely) {
+    talentelyBtn.href = p.talentely;
+  }
+
+  // Contact section dynamic links
+  const contactEmailLink = document.getElementById('contact-link-email');
+  if (contactEmailLink && p.email) {
+    contactEmailLink.href = `mailto:${p.email}`;
+    safeSetText('contact-val-email', p.email);
+  }
+  const contactLinkedinLink = document.getElementById('contact-link-linkedin');
+  if (contactLinkedinLink && p.linkedin) {
+    contactLinkedinLink.href = p.linkedin;
+    const cleanLi = p.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, '').replace(/\/$/, '');
+    safeSetText('contact-val-linkedin', cleanLi || 'LinkedIn');
+  }
+  const contactGithubLink = document.getElementById('contact-link-github');
+  if (contactGithubLink && p.github) {
+    contactGithubLink.href = p.github;
+    const cleanGh = p.github.replace(/^https?:\/\/(www\.)?github\.com\//, '').replace(/\/$/, '');
+    safeSetText('contact-val-github', cleanGh || 'GitHub');
+  }
+  const contactTalentelyLink = document.getElementById('contact-link-talentely');
+  if (contactTalentelyLink && p.talentely) {
+    contactTalentelyLink.href = p.talentely;
+  }
 }
 
 function populateProfileForm() {
@@ -1048,25 +1178,39 @@ function populateProfileForm() {
   setVal('dash-prof-title', p.title);
   setVal('dash-prof-college', p.college);
   setVal('dash-prof-grad', p.gradYear);
+  setVal('dash-prof-badge-text', p.badgeText || 'Open to internships');
+  const badgeCheck = document.getElementById('dash-prof-badge-visible');
+  if (badgeCheck) badgeCheck.checked = p.badgeVisible !== false;
   setVal('dash-prof-interests', p.interests);
+  setVal('dash-prof-languages', p.languages);
   setVal('dash-prof-bio', p.bio);
   setVal('dash-prof-email', p.email);
   setVal('dash-prof-location', p.location);
+  setVal('dash-prof-linkedin', p.linkedin);
+  setVal('dash-prof-github', p.github);
+  setVal('dash-prof-talentely', p.talentely);
 }
 
 function saveProfileSettings(e) {
   if (e) e.preventDefault();
   const getVal = (id) => (document.getElementById(id)?.value || '').trim();
+  const badgeCheck = document.getElementById('dash-prof-badge-visible');
   STATE.profile = {
     ...STATE.profile,
     name: getVal('dash-prof-name') || 'Harrish R S',
-    title: getVal('dash-prof-title') || 'B.Tech Artificial Intelligence and Data Science Student',
-    college: getVal('dash-prof-college') || 'V.S.B. Engineering College, Karur',
+    title: getVal('dash-prof-title') || 'B.Tech AI & Data Science Student',
+    college: getVal('dash-prof-college') || 'V S B Engineering College Karur',
     gradYear: getVal('dash-prof-grad') || '2029',
+    badgeText: getVal('dash-prof-badge-text') || 'Open to internships',
+    badgeVisible: badgeCheck ? badgeCheck.checked : true,
     interests: getVal('dash-prof-interests') || 'Machine Learning, Python Programming, Java Programming, and Data Analytics',
+    languages: getVal('dash-prof-languages') || 'Tamil (Native) · English (Proficient)',
     bio: getVal('dash-prof-bio') || '',
     email: getVal('dash-prof-email') || '697harrish@gmail.com',
-    location: getVal('dash-prof-location') || 'Karur, Tamil Nadu, India'
+    location: getVal('dash-prof-location') || 'Karur, Tamil Nadu, India',
+    linkedin: getVal('dash-prof-linkedin') || 'https://www.linkedin.com/in/harrish-r-s-256a1237a/',
+    github: getVal('dash-prof-github') || 'https://github.com/harrish-rs-tech',
+    talentely: getVal('dash-prof-talentely') || 'https://lms.talentely.com/in/d42d7c4c-1eb4-421d-bc47-047663ab91ff'
   };
   saveProfileToStorage();
   renderProfile();
@@ -1103,7 +1247,7 @@ function renderTimeline() {
     <div class="timeline-item">
       <div class="timeline-date">${escHtml(btech.period || '2025 – Present')}</div>
       <div class="timeline-title">${escHtml(btech.degree || 'B.Tech – Artificial Intelligence and Data Science')}</div>
-      <div class="timeline-sub">${escHtml(btech.college || 'V.S.B. Engineering College, Karur')} · Expected Graduation: ${escHtml(btech.gradYear || '2029')}</div>
+      <div class="timeline-sub">${escHtml(btech.college || 'V S B Engineering College Karur')} · Expected Graduation: ${escHtml(btech.gradYear || '2029')}</div>
       <div class="timeline-desc">${escHtml(btech.desc || '')}</div>
     </div>
 
@@ -1128,9 +1272,16 @@ function renderTimeline() {
 
 function populateTimelineForm() {
   if (!STATE.timeline) return;
+  const btech = STATE.timeline.btech || DEFAULT_DATA.timeline.btech || {};
   const pega = STATE.timeline.pega || {};
   const school = STATE.timeline.school || {};
   const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+
+  setVal('btech-in-title', btech.degree || 'B.Tech – Artificial Intelligence and Data Science');
+  setVal('btech-in-college', btech.college || 'V S B Engineering College Karur');
+  setVal('btech-in-period', btech.period || '2025 – Present');
+  setVal('btech-in-grad', btech.gradYear || '2029');
+  setVal('btech-in-desc', btech.desc || '');
 
   setVal('pega-in-title', pega.title || 'Pega Internship');
   setVal('pega-in-org', pega.organization || 'Pega Systems');
@@ -1145,6 +1296,22 @@ function populateTimelineForm() {
   setVal('school-in-spec', school.specialization || '');
   setVal('school-in-marks', school.marks || '');
   setVal('school-in-ach', school.achievements || '');
+}
+
+function saveBtechTimeline(e) {
+  if (e) e.preventDefault();
+  const getVal = (id) => (document.getElementById(id)?.value || '').trim();
+  if (!STATE.timeline) STATE.timeline = {};
+  STATE.timeline.btech = {
+    degree: getVal('btech-in-title') || 'B.Tech – Artificial Intelligence and Data Science',
+    college: getVal('btech-in-college') || 'V S B Engineering College Karur',
+    period: getVal('btech-in-period') || '2025 – Present',
+    gradYear: getVal('btech-in-grad') || '2029',
+    desc: getVal('btech-in-desc') || ''
+  };
+  saveTimelineToStorage();
+  renderTimeline();
+  showToast('B.Tech degree timeline saved!');
 }
 
 function savePegaTimeline(e) {
@@ -1337,6 +1504,7 @@ function populateEmailSettingsForm() {
   setVal('cfg-emailjs-service', cfg.serviceId !== 'YOUR_EMAILJS_SERVICE_ID' ? cfg.serviceId : '');
   setVal('cfg-emailjs-template', cfg.templateId !== 'YOUR_EMAILJS_TEMPLATE_ID' ? cfg.templateId : '');
   setVal('cfg-formspree', cfg.formspree?.endpoint || '');
+  updateEmailStatusNote();
 }
 
 function saveEmailSettings(e) {
@@ -1347,11 +1515,18 @@ function saveEmailSettings(e) {
   const tmp = getVal('cfg-emailjs-template');
   const fsp = getVal('cfg-formspree');
 
+  const isEmailJSConfigured = Boolean(
+    pub && srv && tmp &&
+    pub !== 'YOUR_EMAILJS_PUBLIC_KEY' &&
+    srv !== 'YOUR_EMAILJS_SERVICE_ID' &&
+    tmp !== 'YOUR_EMAILJS_TEMPLATE_ID'
+  );
+
   STATE.emailConfig = {
     publicKey: pub || EMAILJS_CONFIG.publicKey,
     serviceId: srv || EMAILJS_CONFIG.serviceId,
     templateId: tmp || EMAILJS_CONFIG.templateId,
-    configured: Boolean(pub && srv && tmp),
+    configured: isEmailJSConfigured,
     formspree: {
       endpoint: fsp,
       configured: Boolean(fsp)
@@ -1359,27 +1534,180 @@ function saveEmailSettings(e) {
   };
   LS.set('hrs_email_cfg', STATE.emailConfig);
 
-  if (STATE.emailConfig.configured) {
+  if (isEmailJSConfigured) {
     initEmailJS();
   }
+  updateEmailStatusNote();
 
   showToast('Email delivery settings saved!');
 }
 
+function saveNewDashboardPassword(e) {
+  if (e) e.preventDefault();
+  const newPass = (document.getElementById('dash-new-pass-input')?.value || '').trim();
+  const confirmPass = (document.getElementById('dash-confirm-pass-input')?.value || '').trim();
+  if (!newPass || newPass.length < 6) {
+    showToast('Password must be at least 6 characters.', 'error');
+    return;
+  }
+  if (newPass !== confirmPass) {
+    showToast('Passwords do not match.', 'error');
+    return;
+  }
+  LS.set('hrs_dash_password', newPass);
+  const p1 = document.getElementById('dash-new-pass-input');
+  const p2 = document.getElementById('dash-confirm-pass-input');
+  if (p1) p1.value = '';
+  if (p2) p2.value = '';
+  showToast('Dashboard password updated successfully! Please save your new password.');
+}
+
+function resetDashboardPassword() {
+  LS.set('hrs_dash_password', DASHBOARD_CONFIG.password);
+  showToast(`Dashboard password reset to default (${DASHBOARD_CONFIG.password})`);
+}
+
+function togglePasswordVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (btn) btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    if (btn) btn.textContent = '👁️';
+  }
+}
+
 function initEmailJS() {
   const cfg = STATE.emailConfig || EMAILJS_CONFIG;
-  if (cfg.configured && cfg.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined') {
+  const isRealEmailJS = Boolean(
+    cfg.configured &&
+    cfg.publicKey && cfg.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' &&
+    typeof emailjs !== 'undefined'
+  );
+  if (isRealEmailJS) {
     try {
       emailjs.init({ publicKey: cfg.publicKey });
-      const note = document.getElementById('emailjs-status-note');
-      if (note) {
-        note.textContent = '✅ Email delivery active.';
-        note.style.color = 'var(--teal-400)';
-      }
     } catch (e) {
       console.warn('EmailJS init error:', e);
     }
   }
+  updateEmailStatusNote();
+}
+
+function updateEmailStatusNote() {
+  const note = document.getElementById('emailjs-status-note');
+  const dashStatus = document.getElementById('dash-email-status');
+  const cfg = STATE.emailConfig || EMAILJS_CONFIG;
+
+  const isEmailJS = Boolean(
+    cfg.configured &&
+    cfg.publicKey && cfg.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' &&
+    cfg.serviceId && cfg.serviceId !== 'YOUR_EMAILJS_SERVICE_ID' &&
+    cfg.templateId && cfg.templateId !== 'YOUR_EMAILJS_TEMPLATE_ID'
+  );
+
+  let statusText = '🟢 Direct delivery active';
+  if (isEmailJS) {
+    statusText = '🟢 Delivered via EmailJS';
+  } else if (cfg.formspree?.configured && cfg.formspree.endpoint) {
+    statusText = '🟢 Delivered via Formspree';
+  }
+
+  if (note) {
+    note.textContent = statusText;
+    note.style.color = 'var(--teal-400)';
+  }
+  if (dashStatus) {
+    dashStatus.textContent = statusText;
+  }
+}
+
+function sendViaDirectBackend(name, email, subject, message, recipientEmail, btn, feedback) {
+  fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipientEmail)}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      _subject: subject || `Portfolio message from ${name}`,
+      message: message,
+      _replyto: email,
+      _template: 'table',
+      _captcha: 'false'
+    })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+    return res.json();
+  })
+  .then(data => {
+    feedback.className = 'form-feedback success';
+    feedback.innerHTML = `
+      ✅ Message sent successfully to <strong>${escHtml(recipientEmail)}</strong>! I will reply shortly.
+      <div style="margin-top:6px;font-size:0.8rem;color:var(--text-secondary)">
+        📩 <em>First time notice:</em> FormSubmit may send a 1-time activation confirmation email to <strong>${escHtml(recipientEmail)}</strong>. Check your inbox or spam to click "Activate" once.
+      </div>
+    `;
+    document.getElementById('contact-form').reset();
+    showToast('Message sent to ' + recipientEmail);
+  })
+  .catch(err => {
+    console.error('Direct delivery failed, falling back to mail client:', err);
+    const sub  = encodeURIComponent(subject || `Portfolio contact from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+    const mailtoUrl = `mailto:${recipientEmail}?subject=${sub}&body=${body}`;
+
+    feedback.className = 'form-feedback error';
+    feedback.innerHTML = `
+      ⚠️ <strong>Could not connect to automated email server.</strong>
+      <div style="margin-top:8px">
+        You can send this message directly via your email client:
+        <br>
+        <a href="${mailtoUrl}" class="btn btn-primary btn-sm" style="display:inline-block;margin-top:8px">✉️ Open in Email Client to Send Directly</a>
+      </div>
+    `;
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.innerHTML = '📨 Send Message';
+  });
+}
+
+function sendTestEmail() {
+  const btn = document.getElementById('btn-test-email');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Sending test…'; }
+  const recipientEmail = (STATE.profile?.email || DEFAULT_DATA.profile.email || '697harrish@gmail.com').trim();
+
+  fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipientEmail)}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: 'Portfolio Test Bot',
+      email: recipientEmail,
+      _subject: 'Portfolio Contact Form Test Delivery',
+      message: `Hello Harrish! This is a test message to confirm your portfolio contact form is delivering to ${recipientEmail} successfully.`,
+      _template: 'table',
+      _captcha: 'false'
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    showToast('Test email sent to ' + recipientEmail + '! Check inbox or spam.');
+  })
+  .catch(err => {
+    showToast('Test email error: ' + err.message, 'error');
+  })
+  .finally(() => {
+    if (btn) { btn.disabled = false; btn.textContent = '📨 Send Test Message to 697harrish@gmail.com'; }
+  });
 }
 
 function handleContactSubmit(e) {
@@ -1402,8 +1730,8 @@ function handleContactSubmit(e) {
 
   // Client-side validation
   clearFieldErrors();
-  if (!name)                         { showFieldError('cf-name',    'Name is required.');                       return; }
-  if (!email || !isValidEmail(email)){ showFieldError('cf-email',   'A valid email address is required.');      return; }
+  if (!name)                          { showFieldError('cf-name',    'Name is required.');                       return; }
+  if (!email || !isValidEmail(email)) { showFieldError('cf-email',   'A valid email address is required.');      return; }
   if (!message || message.length < 10){ showFieldError('cf-message', 'Message must be at least 10 characters.'); return; }
 
   // Loading state
@@ -1413,6 +1741,7 @@ function handleContactSubmit(e) {
   feedback.textContent = '';
 
   const cfg = STATE.emailConfig || {};
+  const recipientEmail = (STATE.profile?.email || DEFAULT_DATA.profile.email || '697harrish@gmail.com').trim();
 
   // ── 1. Formspree Delivery (if endpoint configured) ──────
   if (cfg.formspree?.configured && cfg.formspree.endpoint) {
@@ -1433,26 +1762,36 @@ function handleContactSubmit(e) {
     .then(res => {
       if (res.ok) {
         feedback.className = 'form-feedback success';
-        feedback.innerHTML = '✅ Message delivered successfully to 697harrish@gmail.com! I will reply shortly.';
+        feedback.innerHTML = `✅ Message delivered successfully to <strong>${escHtml(recipientEmail)}</strong>! I will reply shortly.`;
         document.getElementById('contact-form').reset();
+        showToast('Message sent successfully!');
       } else {
         throw new Error('Formspree response not OK');
       }
     })
     .catch(err => {
-      console.error('Formspree error:', err);
-      feedback.className = 'form-feedback error';
-      feedback.innerHTML = '❌ Message delivery failed. Please email me directly at <a href="mailto:697harrish@gmail.com" style="color:inherit;text-decoration:underline">697harrish@gmail.com</a>.';
+      console.warn('Formspree error, falling back to direct delivery:', err);
+      sendViaDirectBackend(name, email, subject, message, recipientEmail, btn, feedback);
     })
     .finally(() => {
-      btn.disabled = false;
-      btn.innerHTML = '📨 Send Message';
+      if (feedback.className.includes('success')) {
+        btn.disabled = false;
+        btn.innerHTML = '📨 Send Message';
+      }
     });
     return;
   }
 
-  // ── 2. EmailJS Delivery (if configured) ─────────────────
-  if (cfg.configured && cfg.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined') {
+  // ── 2. EmailJS Delivery (if configured with real keys) ────
+  const hasRealEmailJS = Boolean(
+    cfg.configured &&
+    cfg.publicKey && cfg.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' &&
+    cfg.serviceId && cfg.serviceId !== 'YOUR_EMAILJS_SERVICE_ID' &&
+    cfg.templateId && cfg.templateId !== 'YOUR_EMAILJS_TEMPLATE_ID' &&
+    typeof emailjs !== 'undefined'
+  );
+
+  if (hasRealEmailJS) {
     emailjs.send(cfg.serviceId, cfg.templateId, {
       from_name:  name,
       from_email: email,
@@ -1461,37 +1800,20 @@ function handleContactSubmit(e) {
       reply_to:   email
     }).then(() => {
       feedback.className = 'form-feedback success';
-      feedback.innerHTML = '✅ Message delivered successfully to 697harrish@gmail.com! I will reply shortly.';
+      feedback.innerHTML = `✅ Message delivered successfully to <strong>${escHtml(recipientEmail)}</strong> via EmailJS! I will reply shortly.`;
       document.getElementById('contact-form').reset();
-    }).catch((err) => {
-      console.error('EmailJS error:', err);
-      feedback.className = 'form-feedback error';
-      feedback.innerHTML = '❌ Delivery failed. Please email me directly at <a href="mailto:697harrish@gmail.com" style="color:inherit;text-decoration:underline">697harrish@gmail.com</a>.';
-    }).finally(() => {
+      showToast('Message sent successfully via EmailJS!');
       btn.disabled = false;
       btn.innerHTML = '📨 Send Message';
+    }).catch((err) => {
+      console.warn('EmailJS error, falling back to direct delivery:', err);
+      sendViaDirectBackend(name, email, subject, message, recipientEmail, btn, feedback);
     });
     return;
   }
 
-  // ── 3. Configuration Notice & Fallback ──────────────────
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.innerHTML = '📨 Send Message';
-    const sub  = encodeURIComponent(subject || `Portfolio contact from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
-    const mailtoUrl = `mailto:697harrish@gmail.com?subject=${sub}&body=${body}`;
-
-    feedback.className = 'form-feedback error';
-    feedback.innerHTML = `
-      ⚠️ <strong>Email service not yet connected:</strong>
-      <div style="margin-top:6px;font-size:0.82rem">
-        To receive messages in browser, add your EmailJS keys or Formspree endpoint in the <strong>Dashboard → Backup &amp; Email</strong> tab.
-        <br>
-        In the meantime, you can <a href="${mailtoUrl}" class="btn btn-outline btn-sm" style="display:inline-block;margin-top:8px">Open in Email Client to Send Directly</a>
-      </div>
-    `;
-  }, 400);
+  // ── 3. Direct Delivery via FormSubmit (Zero-config instant delivery to recipientEmail) ───
+  sendViaDirectBackend(name, email, subject, message, recipientEmail, btn, feedback);
 }
 
 function showFieldError(fieldId, msg) {
@@ -1562,12 +1884,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initNav();
   initScrollReveal();
 
-  // EmailJS initialization
+  // EmailJS initialization & delivery status
   if (typeof emailjs !== 'undefined') {
     initEmailJS();
   } else {
     window.addEventListener('load', initEmailJS);
   }
+  updateEmailStatusNote();
 
   // Auto-restore session if valid
   const session = LS.get(DASHBOARD_CONFIG.sessionKey);
@@ -1635,9 +1958,14 @@ window.showDashboard = showDashboard;
 window.lockDashboard = lockDashboard;
 window.switchDashTab = switchDashTab;
 window.saveProfileSettings = saveProfileSettings;
+window.saveBtechTimeline = saveBtechTimeline;
 window.savePegaTimeline = savePegaTimeline;
 window.saveSchoolTimeline = saveSchoolTimeline;
 window.saveEmailSettings = saveEmailSettings;
+window.saveNewDashboardPassword = saveNewDashboardPassword;
+window.resetDashboardPassword = resetDashboardPassword;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.reorderProject = reorderProject;
 window.exportSiteData = exportSiteData;
 window.importSiteData = importSiteData;
 window.saveTask = saveTask;
@@ -1647,5 +1975,7 @@ window.deleteTask = deleteTask;
 window.setFilter = setFilter;
 window.exportTasks = exportTasks;
 window.handleContactSubmit = handleContactSubmit;
+window.sendTestEmail = sendTestEmail;
+window.updateEmailStatusNote = updateEmailStatusNote;
 window.toggleMobileNav = toggleMobileNav;
 window.closeMobileNav = closeMobileNav;
