@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-18T07:12:58.282Z",
+  "lastUpdated": "2026-10-18T07:14:23.949Z",
   "profile": {
     "name": "Harrish R S",
     "title": "B.Tech Artificial Intelligence & Data Science Student",
@@ -56,6 +56,14 @@
         {
           "id": "sk_java",
           "name": "Java"
+        },
+        {
+          "id": "sk_1792081252731",
+          "name": "c"
+        },
+        {
+          "id": "sk_1792081263266",
+          "name": "SQL"
         }
       ]
     },
@@ -64,16 +72,8 @@
       "icon": "🤖",
       "items": [
         {
-          "id": "sk_ml",
-          "name": "Machine Learning"
-        },
-        {
-          "id": "sk_ai",
-          "name": "Artificial Intelligence"
-        },
-        {
-          "id": "sk_genai",
-          "name": "Generative AI"
+          "id": "sk_1792081289959",
+          "name": "Machine Learning, Artificial Intelligence, Generative AI"
         }
       ]
     },
@@ -82,20 +82,8 @@
       "icon": "📊",
       "items": [
         {
-          "id": "sk_da",
-          "name": "Data Analytics"
-        },
-        {
-          "id": "sk_numpy",
-          "name": "NumPy"
-        },
-        {
-          "id": "sk_pandas",
-          "name": "Pandas"
-        },
-        {
-          "id": "sk_dataviz",
-          "name": "Data Visualization"
+          "id": "sk_1792081304978",
+          "name": "Data Analytics, NumPy, Pandas, Data Visualization"
         }
       ]
     },
@@ -104,24 +92,8 @@
       "icon": "🛠️",
       "items": [
         {
-          "id": "sk_git",
-          "name": "Git"
-        },
-        {
-          "id": "sk_github",
-          "name": "GitHub"
-        },
-        {
-          "id": "sk_vscode",
-          "name": "VS Code"
-        },
-        {
-          "id": "sk_mysql",
-          "name": "MySQL"
-        },
-        {
-          "id": "sk_powerbi",
-          "name": "Power BI"
+          "id": "sk_1792081325109",
+          "name": "Git, GitHub, VS Code, MySQL, Power BI"
         }
       ]
     },
@@ -130,36 +102,13 @@
       "icon": "🌟",
       "items": [
         {
-          "id": "sk_comm",
-          "name": "Communication"
-        },
-        {
-          "id": "sk_teamwork",
-          "name": "Teamwork"
-        },
-        {
-          "id": "sk_probsolve",
-          "name": "Problem Solving"
-        },
-        {
-          "id": "sk_adapt",
-          "name": "Adaptability"
+          "id": "sk_1792081334677",
+          "name": "Communication, Teamwork, Problem Solving, Adaptability"
         }
       ]
     }
   ],
   "achievements": [
-    {
-      "id": "ach_1792307039748",
-      "title": "Data Science and AI – 8-Week Certification Course",
-      "issuer": "Centre for Outreach and Digital Education (CODE), IIT Madras · School Connect",
-      "date": "2024-10",
-      "description": "",
-      "link": "https://drive.google.com/file/d/1OjghRCZq1ZAnBiG-h1UH6t3mCinf3ODc/view?usp=drive_link",
-      "emoji": "🎓",
-      "imageData": null,
-      "imageType": null
-    },
     {
       "id": "ach_infy_2026",
       "title": "Python Foundation Certification",
