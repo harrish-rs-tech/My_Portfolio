@@ -1538,6 +1538,18 @@ function populateGitHubToken() {
   }
 }
 
+function clearGitHubToken() {
+  localStorage.removeItem('hrs_gh_token');
+  const input = document.getElementById('dash-gh-token');
+  if (input) input.value = '';
+  const statusEl = document.getElementById('publish-live-status');
+  if (statusEl) {
+    statusEl.textContent = 'Token cleared from browser storage.';
+    statusEl.style.color = 'var(--text-muted)';
+  }
+  showToast('GitHub token removed from storage.');
+}
+
 async function publishSiteDataToGitHub() {
   const input = document.getElementById('dash-gh-token');
   const token = (input?.value || '').trim() || localStorage.getItem('hrs_gh_token') || '';
@@ -1554,7 +1566,16 @@ async function publishSiteDataToGitHub() {
     return;
   }
 
-  localStorage.setItem('hrs_gh_token', token);
+  // Pre-validate token prefix to prevent sending invalid strings to GitHub
+  if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+    if (statusEl) {
+      statusEl.textContent = '❌ Invalid format: GitHub Personal Access Tokens start with "ghp_" or "github_pat_".';
+      statusEl.style.color = '#f87171';
+    }
+    showToast('Token must start with "ghp_" or "github_pat_". Check Backup & Email tab.', 'error');
+    return;
+  }
+
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Publishing to GitHub…'; }
   if (statusEl) { statusEl.textContent = '⏳ Connecting to GitHub repository…'; statusEl.style.color = '#fdba74'; }
 
@@ -1566,19 +1587,22 @@ async function publishSiteDataToGitHub() {
 
     // 1. Fetch current file SHA if it exists
     let currentSha = null;
-    try {
-      const getRes = await fetch(apiUrl, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (getRes.ok) {
-        const fileInfo = await getRes.json();
-        currentSha = fileInfo.sha;
+    const getRes = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
       }
-    } catch (e) {
-      console.warn('Could not fetch existing SHA:', e);
+    });
+
+    if (getRes.status === 401) {
+      localStorage.removeItem('hrs_gh_token');
+      if (input) input.value = '';
+      throw new Error('Bad credentials: The GitHub token is invalid or expired. The stored token has been cleared.');
+    }
+
+    if (getRes.ok) {
+      const fileInfo = await getRes.json();
+      currentSha = fileInfo.sha;
     }
 
     // 2. Prepare payload
@@ -1609,11 +1633,19 @@ async function publishSiteDataToGitHub() {
       })
     });
 
+    if (putRes.status === 401) {
+      localStorage.removeItem('hrs_gh_token');
+      if (input) input.value = '';
+      throw new Error('Bad credentials: The GitHub token was rejected by GitHub and has been cleared.');
+    }
+
     if (!putRes.ok) {
       const errData = await putRes.json().catch(() => ({}));
       throw new Error(errData.message || `GitHub error ${putRes.status}`);
     }
 
+    // Save only valid working token
+    localStorage.setItem('hrs_gh_token', token);
     LS.set('hrs_last_edit_time', Date.now());
     showToast('🎉 Published to GitHub! Render will update live site in ~20s.');
     if (statusEl) {
@@ -1621,10 +1653,10 @@ async function publishSiteDataToGitHub() {
       statusEl.style.color = 'var(--teal-400)';
     }
   } catch (err) {
-    console.error('Publish error:', err);
+    console.warn('Publish note:', err.message);
     showToast(`Publish failed: ${err.message}`, 'error');
     if (statusEl) {
-      statusEl.textContent = `❌ Failed: ${err.message}`;
+      statusEl.textContent = `❌ ${err.message}`;
       statusEl.style.color = '#f87171';
     }
   } finally {
@@ -2162,5 +2194,6 @@ window.sendTestEmail = sendTestEmail;
 window.updateEmailStatusNote = updateEmailStatusNote;
 window.publishSiteDataToGitHub = publishSiteDataToGitHub;
 window.saveGitHubToken = saveGitHubToken;
+window.clearGitHubToken = clearGitHubToken;
 window.toggleMobileNav = toggleMobileNav;
 window.closeMobileNav = closeMobileNav;
