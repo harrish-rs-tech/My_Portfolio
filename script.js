@@ -1568,6 +1568,11 @@ async function publishSiteDataToGitHub() {
 
   // Pre-validate token prefix to prevent sending invalid strings to GitHub
   if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+    switchDashTab('backup');
+    if (input) {
+      input.focus();
+      input.style.borderColor = '#f87171';
+    }
     if (statusEl) {
       statusEl.textContent = '❌ Invalid format: GitHub Personal Access Tokens start with "ghp_" or "github_pat_".';
       statusEl.style.color = '#f87171';
